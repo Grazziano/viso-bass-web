@@ -7,12 +7,14 @@ import Environments from './pages/Environments';
 import Friendships from './pages/Friendships';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
+import Login from './pages/Login';
 import { Toaster } from './components/ui/sonner';
 
 function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/objects" element={<Objects />} />
         <Route path="/classes" element={<Classes />} />
