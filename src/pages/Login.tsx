@@ -12,11 +12,11 @@ import { Label } from '@/components/ui/label';
 import { Database, Lock, Mail } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { authService } from '@/services/authService';
-import { api } from '@/services/api';
+import { useAuth } from '@/context/useAuth';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,23 +26,11 @@ export default function Login() {
 
     try {
       setLoading(true);
-
-      const data = await authService.login({ email, password });
-
-      const token = data.access_token;
-
-      localStorage.setItem('token', token);
-
-      // adiciona token automaticamente nas próximas requisições
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
+      await login(email, password);
       toast.success('Login realizado com sucesso!');
       navigate('/dashboard');
     } catch (error: unknown) {
-      console.error(error);
-
       let errorMessage = 'Erro ao realizar login. Tente novamente mais tarde.';
-
       if (error && typeof error === 'object' && 'response' in error) {
         const apiError = error as {
           response?: { data?: { message?: string } };
@@ -51,23 +39,10 @@ export default function Login() {
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
-
       toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
-
-    // Simulated login
-    setTimeout(() => {
-      if (email && password) {
-        localStorage.setItem('token', 'demo-token');
-        toast.success('Login realizado com sucesso!');
-        navigate('/dashboard');
-      } else {
-        toast.error('Por favor, preencha todos os campos');
-      }
-      setLoading(false);
-    }, 1000);
   };
 
   return (

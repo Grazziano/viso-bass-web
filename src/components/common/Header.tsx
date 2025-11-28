@@ -2,12 +2,14 @@ import { Database, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/useAuth';
 
 export default function Header() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    logout();
     toast.success('Logout realizado com sucesso!');
     navigate('/login');
   };
