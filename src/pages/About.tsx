@@ -1,5 +1,5 @@
 import Layout from '@/components/layouts/Layout';
-import Title from '@/components/Title';
+import Title from '@/components/common/Title';
 import {
   Card,
   CardContent,

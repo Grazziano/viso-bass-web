@@ -1,6 +1,6 @@
 import { Database, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { toast } from 'sonner';
 
 export default function Header() {
