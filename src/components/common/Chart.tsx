@@ -9,7 +9,7 @@ export default function Chart({ title, content }: ChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="text-2xl">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-64 flex items-center justify-center bg-muted/50 rounded-lg">

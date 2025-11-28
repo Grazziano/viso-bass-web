@@ -2,6 +2,7 @@ import Chart from '@/components/common/Chart';
 import CardStatus from '@/components/dashboard/CardStatus';
 import Layout from '@/components/layouts/Layout';
 import Title from '@/components/common/Title';
+import Activities from '@/components/dashboard/Activities';
 import { ActivitySquare, Box, Globe2, Layers, Users } from 'lucide-react';
 
 export default function Dashboard() {
@@ -43,6 +44,33 @@ export default function Dashboard() {
     },
   ];
 
+  const recentActivities = [
+    {
+      type: 'Objeto',
+      action: 'criado',
+      name: 'Sensor de Temperatura #123',
+      time: '2 minutos atrás',
+    },
+    {
+      type: 'Interação',
+      action: 'registrada',
+      name: 'Device A → Device B',
+      time: '5 minutos atrás',
+    },
+    {
+      type: 'Classe',
+      action: 'atualizada',
+      name: 'Sensores Ambientais',
+      time: '10 minutos atrás',
+    },
+    {
+      type: 'Ambiente',
+      action: 'criado',
+      name: 'Sala de Servidor #2',
+      time: '15 minutos atrás',
+    },
+  ];
+
   return (
     <Layout>
       <div className="space-y-8">
@@ -61,6 +89,8 @@ export default function Dashboard() {
             content="Gráfico de distribuição será exibido aqui"
           />
         </div>
+
+        <Activities activities={recentActivities} />
       </div>
     </Layout>
   );
