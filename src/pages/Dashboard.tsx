@@ -8,37 +8,39 @@ import { ActivitySquare, Box, Globe2, Layers, Users } from 'lucide-react';
 import { api } from '@/services/api';
 
 export default function Dashboard() {
-  const [objects, setObjects] = useState<any>([]);
-  const [classes, setClasses] = useState<any>([]);
-  const [interactions, setInteractions] = useState<any>([]);
-  const [enviroments, setEnviroments] = useState<any>([]);
-  const [friendships, setFriendships] = useState<any>([]);
+  const [objects, setObjects] = useState<number>(0);
+  const [classes, setClasses] = useState<number>(0);
+  const [interactions, setInteractions] = useState<number>(0);
+  const [enviroments, setEnviroments] = useState<number>(0);
+  const [friendships, setFriendships] = useState<number>(0);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [objectsRes, classesRes, interactionsRes, envRes, friendshipRes] =
+          await Promise.all([
+            api.get('/object/count'),
+            api.get('/class/count'),
+            api.get('/interaction/count'),
+            api.get('/ona-environment/count'),
+            api.get('/pagerank-friendship/count'),
+          ]);
+
+        console.log(objectsRes);
+
+        setObjects(objectsRes.data.total);
+        setClasses(classesRes.data.total);
+        setInteractions(interactionsRes.data.total);
+        setEnviroments(envRes.data.total);
+        setFriendships(friendshipRes.data.total);
+      } catch (error) {
+        console.log('Erro ao carregar:', error);
+        // console.log('Erro na rota:', error.config?.url);
+      }
+    };
+
     fetchData();
-  }, [objects, classes, interactions, enviroments, friendships]);
-
-  const fetchData = async () => {
-    try {
-      const [objectsRes, classesRes, interactionsRes, envRes, friendshipRes] =
-        await Promise.all([
-          api.get('/object'),
-          api.get('/class'),
-          api.get('/interaction'),
-          api.get('/ona-environment'),
-          api.get('/pagerank-friendship'),
-        ]);
-
-      setObjects(objectsRes.data);
-      setClasses(classesRes.data);
-      setInteractions(interactionsRes.data);
-      setEnviroments(envRes.data);
-      setFriendships(friendshipRes.data);
-    } catch (error) {
-      console.log('Erro ao carregar:', error);
-      // console.log('Erro na rota:', error.config?.url);
-    }
-  };
+  }, []);
 
   function formatNumberBR(value: number, decimals: number = 2) {
     return new Intl.NumberFormat('pt-BR', {
@@ -51,35 +53,40 @@ export default function Dashboard() {
     {
       icon: Box,
       label: 'Objetos',
-      value: formatNumberBR(objects.length),
+      value: formatNumberBR(objects),
+      loading: !objects,
       change: '+12%',
       color: 'text-blue-500',
     },
     {
       icon: Layers,
       label: 'Classes',
-      value: formatNumberBR(classes.length),
+      value: formatNumberBR(classes),
+      loading: !classes,
       change: '+5%',
       color: 'text-cyan-500',
     },
     {
       icon: ActivitySquare,
       label: 'Interações',
-      value: formatNumberBR(interactions.length),
+      value: formatNumberBR(interactions),
+      loading: !interactions,
       change: '+23%',
       color: 'text-indigo-500',
     },
     {
       icon: Globe2,
       label: 'Ambientes',
-      value: formatNumberBR(enviroments.length),
+      value: formatNumberBR(enviroments),
+      loading: !enviroments,
       change: '+3%',
       color: 'text-teal-500',
     },
     {
       icon: Users,
       label: 'Relações',
-      value: formatNumberBR(friendships.length),
+      value: formatNumberBR(friendships),
+      loading: !friendships,
       change: '+18%',
       color: 'text-sky-500',
     },
@@ -117,7 +124,19 @@ export default function Dashboard() {
       <div className="space-y-8">
         <Title title="Dashboard" subtitle="Visão geral do sistema VISO-BASS" />
 
-        <CardStatus stats={stats} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {stats.map((stat) => (
+            <CardStatus
+              key={stat.label}
+              icon={stat.icon}
+              label={stat.label}
+              value={stat.value}
+              loading={stat.loading}
+              change={stat.change}
+              color={stat.color}
+            />
+          ))}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Chart
