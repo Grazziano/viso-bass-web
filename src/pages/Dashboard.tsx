@@ -12,6 +12,12 @@ import type { IInteraction } from '@/types/interaction';
 import type { IEnvironment } from '@/types/enrironment';
 import type { IFriendship } from '@/types/friendship';
 import { formatNumberBR } from '@/utils/format-number.util';
+// import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
+
+// interface TimeSeries {
+//   date: string;
+//   interactions: number;
+// }
 
 export default function Dashboard() {
   const [objects, setObjects] = useState<number>(0);
@@ -25,6 +31,8 @@ export default function Dashboard() {
   const [lastInteraction, setLastInteraction] = useState<IInteraction>();
   const [lastEnvironment, setLastEnvironment] = useState<IEnvironment>();
   const [lastFriendship, setLastFriendship] = useState<IFriendship>();
+
+  // const [fetchTimeSeries, setFetchTimeSeries] = useState<TimeSeries[]>();
 
   console.log(lastInteraction);
   console.log(lastEnvironment);
@@ -80,6 +88,20 @@ export default function Dashboard() {
 
     fechActivities();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchTimeSeries = async () => {
+  //     try {
+  //       const response = await api.get('/interaction/time-series');
+  //       console.log(response.data);
+  //       setFetchTimeSeries(response.data);
+  //     } catch (error) {
+  //       console.log('Erro ao carregar time series');
+  //     }
+  //   };
+
+  //   fetchTimeSeries();
+  // }, []);
 
   const stats = [
     {
