@@ -9,15 +9,20 @@ import { cn } from '@/lib/utils';
 import { Loader2, Plus, Search } from 'lucide-react';
 import { api } from '@/services/api';
 import type { IObject } from '@/types/objects';
+import { AlertDialogDemo } from '@/components/objects/AlertDialogDemo';
 
 export default function Objects() {
   const [objects, setObjects] = useState<IObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  // const [page, setPage] = useState<number>();
+  // const [limit, setLimit] = useState<number>();
 
   useEffect(() => {
     const fetchObjects = async () => {
       const response = await api.get('/object');
-      setObjects(response.data);
+      setObjects(response.data.items);
+      // setLimit(response.data.limit);
+      // setPage(response.data.page);
       setLoading(false);
     };
 
@@ -57,6 +62,9 @@ export default function Objects() {
             </Button>
           </div>
         </td> */}
+        <td className="py-3 px-4">
+          <AlertDialogDemo btnText="Exibir" obj={obj} />
+        </td>
       </tr>
     ));
   }, [objects]);
