@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# ⚛️ VISO BASS REACT
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação web para monitoramento de dados da API VISO BASS.
 
-Currently, two official plugins are available:
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Shadcn/ui](https://img.shields.io/badge/shadcn/ui-%23000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tecnologias
 
-## React Compiler
+- React 19
+- TypeScript
+- Tailwind CSS
+- Shadcn/UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📦 Instalação
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone o repositório:
+```bash
+git clone https://github.com/Grazziano/VISO-BASS-REACT.git
+cd viso-bass
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Instale as dependências:
+```bash
+npm install
 ```
+
+3. Configure o arquivo `.env`:
+```env
+VITE_API_URL=url_da_api
+```
+
+4. Inicie o projeto:
+```bash
+npm run dev
+```
+
+## 🎯 Funcionalidades
+
+- Dashboard com métricas gerais
+- Gráficos interativos de histórico
+- Monitoramento de dispositivos
+- Interface responsiva
+<!-- - Sistema de alertas
+- Tema claro/escuro -->
+
+## 📁 Estrutura
+
+```
+src/
+├── components/    # Componentes React
+├── pages/         # Páginas da aplicação
+├── services/      # Conexão com a API
+├── types/         # Tipos TypeScript
+└── styles/        # Estilos globais
+```
+
+## 🔌 API
+
+A aplicação consome os endpoints da API VISO-BASS:
+
+- `GET /object` - Lista objetos
+- `GET /class` - Lista classes
+- `GET /interaction` - Lista interações
+- ... 
+
+[Link do repositório da API](https://github.com/Grazziano/VISO-BASS)
+
+## 🛠️ Scripts
+
+```bash
+npm run dev        # Inicia servidor local
+npm run build      # Cria build para produção
+npm run lint       # Verifica código
+npm run preview    # Previa build
+```
+
+## 📄 Licença
+
+MIT
+
+---
+
+</> Feito com React + TypeScript + Tailwind
