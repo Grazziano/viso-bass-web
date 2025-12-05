@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { Loader2, Plus, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { api } from '@/services/api';
 import type { IObject } from '@/types/objects';
 import { AlertDialogDemo } from '@/components/objects/AlertDialogDemo';
+import Loading from '@/components/common/Loading';
 
 export default function Objects() {
   const [objects, setObjects] = useState<IObject[]>([]);
@@ -70,13 +71,7 @@ export default function Objects() {
   }, [objects]);
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="flex justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin" />
-        </div>
-      </Layout>
-    );
+    return <Loading />;
   }
 
   return (
