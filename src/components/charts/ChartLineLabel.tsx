@@ -1,5 +1,12 @@
 import { TrendingUp } from 'lucide-react';
-import { CartesianGrid, LabelList, Line, LineChart, XAxis } from 'recharts';
+import {
+  CartesianGrid,
+  LabelList,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import {
   Card,
@@ -22,6 +29,7 @@ export const description = 'A line chart with a label';
 const chartConfig = {
   interactions: {
     label: 'Interações',
+    // color: 'var(--chart-1)',
     color: '#2B7FFF',
   },
 } satisfies ChartConfig;
@@ -34,6 +42,8 @@ interface ChartLineLabelProps {
   days?: number;
   data: TimeSeriesPoint[];
   onButtonClick: () => void;
+  width?: string | number;
+  height?: string | number;
 }
 
 export function ChartLineLabel({
@@ -68,28 +78,55 @@ export function ChartLineLabel({
               right: 12,
             }}
           >
-            <CartesianGrid vertical={false} />
+            <defs>
+              <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop
+                  offset="0%"
+                  stopColor="var(--color-interactions)"
+                  stopOpacity={0.9}
+                />
+                <stop
+                  offset="100%"
+                  stopColor="var(--color-interactions)"
+                  stopOpacity={0.4}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => String(value).slice(0, 3)}
+              tickFormatter={(value) => {
+                const d = new Date(String(value));
+                return isNaN(d.getTime())
+                  ? String(value).slice(0, 3)
+                  : d.toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                    });
+              }}
             />
+            <YAxis tickLine={false} axisLine={false} width={30} />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
+              content={<ChartTooltipContent indicator="line" labelKey="date" />}
             />
             <Line
               dataKey="interactions"
-              type="natural"
-              stroke="var(--color-interactions)"
-              strokeWidth={2}
+              type="monotone"
+              stroke="url(#lineGradient)"
+              strokeWidth={2.5}
+              connectNulls
               dot={{
+                r: 3,
                 fill: 'var(--color-interactions)',
               }}
               activeDot={{
                 r: 6,
+                stroke: 'var(--color-interactions)',
+                strokeWidth: 2,
               }}
             >
               <LabelList

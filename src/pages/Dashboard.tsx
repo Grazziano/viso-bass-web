@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Chart from '@/components/common/Chart';
 import CardStatus from '@/components/dashboard/CardStatus';
 import Layout from '@/components/layouts/Layout';
 import Title from '@/components/common/Title';
@@ -13,6 +12,7 @@ import type { IEnvironment } from '@/types/enrironment';
 import type { IFriendship } from '@/types/friendship';
 import { formatNumberBR } from '@/utils/format-number.util';
 import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
+// import { ChartRadarDots } from '@/components/charts/ChartRadarDots';
 
 interface TimeSeries {
   date: string;
@@ -33,6 +33,9 @@ export default function Dashboard() {
   const [lastFriendship, setLastFriendship] = useState<IFriendship>();
 
   const [fetchTimeSeries, setFetchTimeSeries] = useState<TimeSeries[]>([]);
+  // const [classDistribution, setClassDistribution] = useState<
+  //   { name: string; count: number }[]
+  // >([]);
   const [days, setDays] = useState<number>(7);
 
   const handleChangeDays = () => {
@@ -112,6 +115,24 @@ export default function Dashboard() {
 
     fetchTimeSeries();
   }, [days]);
+
+  // useEffect(() => {
+  //   const fetchClassDistribution = async () => {
+  //     try {
+  //       const response = await api.get('/class');
+  //       const items = response.data.items as IClass[];
+  //       const distribution = items.map((c) => ({
+  //         name: c.class_name,
+  //         count: Array.isArray(c.objects) ? c.objects.length : 0,
+  //       }));
+  //       setClassDistribution(distribution);
+  //     } catch (error) {
+  //       console.log('Erro ao carregar distribuição por classe', error);
+  //     }
+  //   };
+
+  //   fetchClassDistribution();
+  // }, []);
 
   const stats = [
     {
@@ -202,7 +223,7 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
           <ChartLineLabel
             title="Interações ao longo do tempo"
             description="Série temporal de interações"
@@ -211,10 +232,7 @@ export default function Dashboard() {
             onButtonClick={handleChangeDays}
           />
 
-          <Chart
-            title="Distribuição por Classe"
-            content="Gráfico de distribuição será exibido aqui"
-          />
+          {/* <ChartRadarDots data={classDistribution} /> */}
         </div>
 
         <Activities activities={recentActivities} />
