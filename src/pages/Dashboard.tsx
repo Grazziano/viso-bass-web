@@ -230,6 +230,7 @@ export default function Dashboard() {
             days={days}
             data={fetchTimeSeries}
             onButtonClick={handleChangeDays}
+            className="w-full h-96"
           />
 
           {/* <ChartRadarDots data={classDistribution} /> */}

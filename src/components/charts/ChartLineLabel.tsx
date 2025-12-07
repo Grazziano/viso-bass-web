@@ -44,6 +44,7 @@ interface ChartLineLabelProps {
   onButtonClick: () => void;
   width?: string | number;
   height?: string | number;
+  className?: string;
 }
 
 export function ChartLineLabel({
@@ -52,6 +53,7 @@ export function ChartLineLabel({
   days = 7,
   data,
   onButtonClick,
+  className,
 }: ChartLineLabelProps) {
   return (
     <Card>
@@ -68,7 +70,7 @@ export function ChartLineLabel({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className={className}>
           <LineChart
             accessibilityLayer
             data={data}
