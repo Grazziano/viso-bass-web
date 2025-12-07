@@ -12,12 +12,12 @@ import type { IInteraction } from '@/types/interaction';
 import type { IEnvironment } from '@/types/enrironment';
 import type { IFriendship } from '@/types/friendship';
 import { formatNumberBR } from '@/utils/format-number.util';
-// import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
+import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
 
-// interface TimeSeries {
-//   date: string;
-//   interactions: number;
-// }
+interface TimeSeries {
+  date: string;
+  interactions: number;
+}
 
 export default function Dashboard() {
   const [objects, setObjects] = useState<number>(0);
@@ -32,7 +32,16 @@ export default function Dashboard() {
   const [lastEnvironment, setLastEnvironment] = useState<IEnvironment>();
   const [lastFriendship, setLastFriendship] = useState<IFriendship>();
 
-  // const [fetchTimeSeries, setFetchTimeSeries] = useState<TimeSeries[]>();
+  const [fetchTimeSeries, setFetchTimeSeries] = useState<TimeSeries[]>([]);
+  const [days, setDays] = useState<number>(7);
+
+  const handleChangeDays = () => {
+    if (days === 7) {
+      setDays(30);
+    } else {
+      setDays(7);
+    }
+  };
 
   console.log(lastInteraction);
   console.log(lastEnvironment);
@@ -89,19 +98,20 @@ export default function Dashboard() {
     fechActivities();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchTimeSeries = async () => {
-  //     try {
-  //       const response = await api.get('/interaction/time-series');
-  //       console.log(response.data);
-  //       setFetchTimeSeries(response.data);
-  //     } catch (error) {
-  //       console.log('Erro ao carregar time series');
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchTimeSeries = async () => {
+      try {
+        const response = await api.get(
+          `/interaction/time-series?range=${days}d`
+        );
+        setFetchTimeSeries(response.data);
+      } catch (error) {
+        console.log('Erro ao carregar time series', error);
+      }
+    };
 
-  //   fetchTimeSeries();
-  // }, []);
+    fetchTimeSeries();
+  }, [days]);
 
   const stats = [
     {
@@ -193,9 +203,12 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Chart
-            title="Interações ao Longo do Tempo"
-            content="Gráfico de série temporal será exibido aqui"
+          <ChartLineLabel
+            title="Interações ao longo do tempo"
+            description="Série temporal de interações"
+            days={days}
+            data={fetchTimeSeries}
+            onButtonClick={handleChangeDays}
           />
 
           <Chart

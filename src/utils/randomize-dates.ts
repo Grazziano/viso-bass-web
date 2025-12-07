@@ -1,0 +1,17 @@
+// db.interactions.find().forEach((doc) => {
+//   const daysAgo = Math.floor(Math.random() * 30); // últimos 30 dias
+//   const randomDate = new Date();
+//   randomDate.setDate(randomDate.getDate() - daysAgo);
+
+//   db.interactions.updateOne(
+//     { _id: doc._id },
+//     {
+//       $set: {
+//         inter_start: randomDate,
+//         inter_end: new Date(randomDate.getTime() + Math.random() * 600000), // + até 10min
+//         createdAt: randomDate,
+//         updatedAt: randomDate,
+//       },
+//     }
+//   );
+// });
