@@ -1,20 +1,17 @@
+import type { IFriendship } from '@/types/friendship';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-
-interface Friendship {
-  id: number | string;
-  device1: string;
-  device2: string;
-  score: number;
-  rank: number;
-  interactions: number;
-}
+import { formatDate } from '@/utils/format-date.util';
 
 interface FriendshipCardProps {
-  friendships: Friendship[];
+  friendships: IFriendship[];
 }
 
 export default function FriendshipCard({ friendships }: FriendshipCardProps) {
+  const maxAdjacency = Math.max(
+    ...friendships.map((f) => f.rank_adjacency.length)
+  );
+
   return (
     <Card className="bg-blue-500 text-white">
       <CardHeader>
@@ -24,7 +21,7 @@ export default function FriendshipCard({ friendships }: FriendshipCardProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {friendships.slice(0, 3).map((friendship, index) => (
             <div
-              key={friendship.id}
+              key={friendship._id}
               className="bg-white/10 backdrop-blur-sm rounded-lg p-4"
             >
               <div className="flex items-center justify-between mb-2">
@@ -35,13 +32,21 @@ export default function FriendshipCard({ friendships }: FriendshipCardProps) {
                   #{index + 1}
                 </Badge>
                 <div className="text-2xl font-bold">
-                  {(friendship.score * 100).toFixed(0)}%
+                  {(
+                    (friendship.rank_adjacency.length / maxAdjacency) *
+                    100
+                  ).toFixed(0)}
+                  %
                 </div>
               </div>
-              <p className="font-medium mb-1">{friendship.device1}</p>
-              <p className="text-sm text-white/80">↔ {friendship.device2}</p>
+              <p className="font-medium mb-1">
+                {friendship.rank_object.obj_name}
+              </p>
+              <p className="text-sm text-white/80">
+                ↔ {formatDate(friendship.createdAt)}
+              </p>
               <p className="text-xs text-white/60 mt-2">
-                {friendship.interactions} interações
+                {friendship.rank_adjacency.length} interações
               </p>
             </div>
           ))}

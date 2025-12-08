@@ -1,52 +1,47 @@
+import { useEffect, useState } from 'react';
 import InputSearch from '@/components/common/InputSearch';
 import Title from '@/components/common/Title';
 import FriendshipCard from '@/components/friendships/FriendshipCard';
 import FriendshipsTable from '@/components/friendships/FriendshipsTable';
 import Layout from '@/components/layouts/Layout';
+import type { IFriendship } from '@/types/friendship';
+import { api } from '@/services/api';
+import Loading from '@/components/common/Loading';
 
 export default function Friendships() {
-  const friendships = [
-    {
-      id: '1',
-      device1: 'Sensor A1',
-      device2: 'Gateway G1',
-      score: 0.95,
-      rank: 1,
-      interactions: 1250,
-    },
-    {
-      id: '2',
-      device1: 'Camera C1',
-      device2: 'Storage S1',
-      score: 0.89,
-      rank: 2,
-      interactions: 980,
-    },
-    {
-      id: '3',
-      device1: 'Sensor M3',
-      device2: 'Alert System A1',
-      score: 0.82,
-      rank: 3,
-      interactions: 756,
-    },
-    {
-      id: '4',
-      device1: 'Display D1',
-      device2: 'Content Server CS1',
-      score: 0.78,
-      rank: 4,
-      interactions: 645,
-    },
-    {
-      id: '5',
-      device1: 'Actuator AC1',
-      device2: 'Controller CT1',
-      score: 0.75,
-      rank: 5,
-      interactions: 589,
-    },
-  ];
+  const [pagerankFriendship, setPagerankFriendship] = useState<IFriendship[]>(
+    []
+  );
+  const [limit, setLimit] = useState<number>(0);
+  const [page, setPage] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchFriendships = async () => {
+      try {
+        setLoading(true);
+        const friendshipsData = await api.get('/pagerank-friendship');
+        setPagerankFriendship(friendshipsData.data.items);
+        setLimit(friendshipsData.data.limit);
+        setPage(friendshipsData.data.page);
+        setTotal(friendshipsData.data.total);
+
+        console.log(friendshipsData.data.items);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFriendships();
+  }, []);
+
+  console.log(limit);
+  console.log(page);
+
+  if (loading) return <Loading />;
 
   return (
     <Layout>
@@ -57,12 +52,12 @@ export default function Friendships() {
         />
 
         {/* Top Relationships */}
-        <FriendshipCard friendships={friendships} />
+        <FriendshipCard friendships={pagerankFriendship} />
 
         <InputSearch placeholder="Buscar relações..." />
 
         {/* Friendships Table */}
-        <FriendshipsTable friendships={friendships} />
+        <FriendshipsTable friendships={pagerankFriendship} total={total} />
       </div>
     </Layout>
   );
