@@ -1,10 +1,9 @@
+import SearchInput from '@/components/common/SearchInput';
 import Title from '@/components/common/Title';
 import EnvironmentCard from '@/components/environments/EnvironmentCard';
 import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export default function Environments() {
   const environments = [
@@ -53,14 +52,7 @@ export default function Environments() {
           </Button>
         </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Buscar ambientes..." className="pl-10" />
-            </div>
-          </CardContent>
-        </Card>
+        <SearchInput placeholder="Buscar ambientes..." />
 
         {/* Environments Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

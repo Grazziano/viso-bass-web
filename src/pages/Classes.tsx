@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
+import SearchInput from '@/components/common/SearchInput';
 
 export default function Classes() {
   const [classList, setClassList] = useState<any[]>([]);
@@ -50,14 +51,7 @@ export default function Classes() {
         </div>
       </div>
 
-      <Card className="mt-6">
-        <CardContent className="pt-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar classes..." className="pl-10" />
-          </div>
-        </CardContent>
-      </Card>
+      <SearchInput placeholder="Buscar classes..." />
 
       {/* Classes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
