@@ -3,12 +3,9 @@ import Chart from '@/components/common/Chart';
 import Title from '@/components/common/Title';
 import InteractionsTable from '@/components/interactions/InteractionsTable';
 import Layout from '@/components/layouts/Layout';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Filter, Search } from 'lucide-react';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
+import SearchAndFilters from '@/components/common/SearchAndFilters';
 
 export default function Interactions() {
   const [interactions, setInteractions] = useState([]);
@@ -65,20 +62,10 @@ export default function Interactions() {
         </div>
 
         {/* Search and Filters */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Buscar interações..." className="pl-10" />
-              </div>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Filtros
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <SearchAndFilters
+          placeholder="Buscar interações..."
+          btnText="Filtros"
+        />
 
         {/* Interactions Table */}
         <InteractionsTable interactions={interactions} total={total} />

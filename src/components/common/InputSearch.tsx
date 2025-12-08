@@ -6,7 +6,7 @@ interface SearchInputProps {
   placeholder?: string;
 }
 
-export default function SearchInput({
+export default function InputSearch({
   placeholder = 'Search',
 }: SearchInputProps) {
   return (

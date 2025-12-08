@@ -4,13 +4,13 @@ import Layout from '@/components/layouts/Layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { api } from '@/services/api';
 import type { IObject } from '@/types/objects';
 import { AlertDialogDemo } from '@/components/objects/AlertDialogDemo';
 import Loading from '@/components/common/Loading';
+import SearchAndFilters from '@/components/common/SearchAndFilters';
 
 export default function Objects() {
   const [objects, setObjects] = useState<IObject[]>([]);
@@ -91,17 +91,7 @@ export default function Objects() {
         </div>
 
         {/* Search and Filters */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Buscar objetos..." className="pl-10" />
-              </div>
-              <Button variant="outline">Filtros</Button>
-            </div>
-          </CardContent>
-        </Card>
+        <SearchAndFilters placeholder="Buscar objetos..." btnText="Filtros" />
 
         {/* Objects Table */}
         <Card>

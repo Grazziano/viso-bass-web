@@ -1,4 +1,4 @@
-import SearchInput from '@/components/common/SearchInput';
+import InputSearch from '@/components/common/InputSearch';
 import Title from '@/components/common/Title';
 import FriendshipCard from '@/components/friendships/FriendshipCard';
 import FriendshipsTable from '@/components/friendships/FriendshipsTable';
@@ -59,7 +59,7 @@ export default function Friendships() {
         {/* Top Relationships */}
         <FriendshipCard friendships={friendships} />
 
-        <SearchInput placeholder="Buscar relações..." />
+        <InputSearch placeholder="Buscar relações..." />
 
         {/* Friendships Table */}
         <FriendshipsTable friendships={friendships} />

@@ -1,4 +1,4 @@
-import SearchInput from '@/components/common/SearchInput';
+import InputSearch from '@/components/common/InputSearch';
 import Title from '@/components/common/Title';
 import EnvironmentCard from '@/components/environments/EnvironmentCard';
 import Layout from '@/components/layouts/Layout';
@@ -52,7 +52,7 @@ export default function Environments() {
           </Button>
         </div>
 
-        <SearchInput placeholder="Buscar ambientes..." />
+        <InputSearch placeholder="Buscar ambientes..." />
 
         {/* Environments Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
