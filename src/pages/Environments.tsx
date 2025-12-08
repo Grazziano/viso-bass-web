@@ -1,41 +1,42 @@
+import { useEffect, useState } from 'react';
 import InputSearch from '@/components/common/InputSearch';
 import Title from '@/components/common/Title';
 import EnvironmentCard from '@/components/environments/EnvironmentCard';
 import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { api } from '@/services/api';
+import Loading from '@/components/common/Loading';
+import type { IEnvironment } from '@/types/enrironment';
 
 export default function Environments() {
-  const environments = [
-    {
-      id: '1',
-      name: 'Sala de Servidores A',
-      location: 'Edifício Principal - Piso 2',
-      devices: 34,
-      status: 'Operacional',
-    },
-    {
-      id: '2',
-      name: 'Escritório Open Space',
-      location: 'Edifício Principal - Piso 3',
-      devices: 89,
-      status: 'Operacional',
-    },
-    {
-      id: '3',
-      name: 'Laboratório IoT',
-      location: 'Centro de Pesquisa',
-      devices: 56,
-      status: 'Manutenção',
-    },
-    {
-      id: '4',
-      name: 'Estacionamento Inteligente',
-      location: 'Subsolo',
-      devices: 23,
-      status: 'Operacional',
-    },
-  ];
+  const [environments, setEnvironments] = useState<IEnvironment[]>([]);
+  // const [page, setPage] = useState<number>(0);
+  // const [limit, setLimit] = useState<number>(0);
+  // const [total, setTotal] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchEnvironments = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/ona-environment');
+        setEnvironments(response.data.items);
+        // setLimit(response.data.limit);
+        // setPage(response.data.page);
+        // setTotal(response.data.total);
+        // console.log(response.data.items);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnvironments();
+  }, []);
+
+  if (loading) return <Loading />;
 
   return (
     <Layout>
@@ -57,7 +58,7 @@ export default function Environments() {
         {/* Environments Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {environments.map((env) => (
-            <EnvironmentCard key={env.id} {...env} />
+            <EnvironmentCard key={env._id} {...env} />
           ))}
         </div>
       </div>
