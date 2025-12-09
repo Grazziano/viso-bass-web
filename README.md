@@ -17,22 +17,26 @@ Aplicação web para monitoramento de dados da API VISO BASS.
 ## 📦 Instalação
 
 1. Clone o repositório:
+
 ```bash
 git clone https://github.com/Grazziano/VISO-BASS-REACT.git
 cd VISO-BASS-REACT
 ```
 
 2. Instale as dependências:
+
 ```bash
 npm install
 ```
 
 3. Configure o arquivo `.env`:
+
 ```env
 VITE_API_URL=url_da_api
 ```
 
 4. Inicie o projeto:
+
 ```bash
 npm run dev
 ```
@@ -64,7 +68,7 @@ A aplicação consome os endpoints da API VISO-BASS:
 - `GET /object` - Lista objetos
 - `GET /class` - Lista classes
 - `GET /interaction` - Lista interações
-- ... 
+- ...
 
 [Link do repositório da API](https://github.com/Grazziano/VISO-BASS)
 
@@ -76,6 +80,27 @@ npm run build      # Cria build para produção
 npm run lint       # Verifica código
 npm run preview    # Previa build
 ```
+
+## 👤 Usuário para Teste
+
+Para fins de demonstração e testes, você pode utilizar as seguintes credenciais:
+
+**Usuário de Demonstração:**
+
+- **Email:** `demo@visobass.com`
+- **Senha:** `Demo@123`
+
+<!-- **Observações:**
+
+- Este é um usuário de teste com permissões limitadas
+- Os dados exibidos são de demonstração e não refletem informações reais em produção
+- Recomendamos criar sua própria conta para uso personalizado
+
+**Para criar uma nova conta:**
+
+1. Clique em "Registrar" na página de login
+2. Preencha os dados solicitados
+3. Confirme seu email através do link enviado -->
 
 ## 📄 Licença
 
