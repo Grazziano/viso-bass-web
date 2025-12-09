@@ -2,13 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import Title from '@/components/common/Title';
 import Layout from '@/components/layouts/Layout';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Plus } from 'lucide-react';
 import { api } from '@/services/api';
 import type { IObject } from '@/types/objects';
 import { AlertDialogDemo } from '@/components/objects/AlertDialogDemo';
+import CreateObjectDialog from '@/components/objects/CreateObjectDialog';
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
 
@@ -17,6 +16,7 @@ export default function Objects() {
   const [loading, setLoading] = useState<boolean>(true);
   // const [page, setPage] = useState<number>();
   // const [limit, setLimit] = useState<number>();
+  const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
     const fetchObjects = async () => {
@@ -24,6 +24,7 @@ export default function Objects() {
       setObjects(response.data.items);
       // setLimit(response.data.limit);
       // setPage(response.data.page);
+      setTotal(response.data.total);
       setLoading(false);
     };
 
@@ -84,10 +85,11 @@ export default function Objects() {
             subtitle="Gerencie os objetos cadastrados no sistema"
           />
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Objeto
-          </Button>
+          <CreateObjectDialog
+            onCreate={(obj) => {
+              setObjects((prev) => [obj, ...prev]);
+            }}
+          />
         </div>
 
         {/* Search and Filters */}
@@ -96,7 +98,7 @@ export default function Objects() {
         {/* Objects Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Lista de Objetos ({objects.length})</CardTitle>
+            <CardTitle>Lista de Objetos ({total})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">

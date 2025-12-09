@@ -9,7 +9,7 @@ export interface IObject {
   obj_model: string;
   obj_networkMAC: string;
   obj_owner: string;
-  obj_qualification: string;
+  obj_qualification: string | number;
   obj_restriction: string[];
   obj_status: number;
   createdAt: string;
