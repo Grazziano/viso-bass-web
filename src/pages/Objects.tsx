@@ -10,6 +10,7 @@ import { AlertDialogDemo } from '@/components/objects/AlertDialogDemo';
 import CreateObjectDialog from '@/components/objects/CreateObjectDialog';
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
+import { Search } from 'lucide-react';
 
 export default function Objects() {
   const [objects, setObjects] = useState<IObject[]>([]);
@@ -17,7 +18,6 @@ export default function Objects() {
   // const [page, setPage] = useState<number>();
   // const [limit, setLimit] = useState<number>();
   const [total, setTotal] = useState<number>(0);
-  const [searching, setSearching] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -43,7 +43,6 @@ export default function Objects() {
     abortControllerRef.current = new AbortController();
 
     try {
-      setSearching(true);
       const url = query
         ? `/object/search?name=${encodeURIComponent(query)}`
         : '/object';
@@ -57,8 +56,6 @@ export default function Objects() {
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Erro na busca:', error);
       }
-    } finally {
-      setSearching(false);
     }
   };
 
@@ -126,7 +123,7 @@ export default function Objects() {
         {/* Search and Filters */}
         <SearchAndFilters
           placeholder="Buscar objetos..."
-          btnText="Filtros"
+          btnText={Search}
           onSearch={handleSearch}
         />
 

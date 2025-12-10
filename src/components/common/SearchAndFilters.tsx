@@ -1,13 +1,13 @@
-import { Search } from 'lucide-react';
+import { Search, type LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 
 interface SearchAndFiltersProps {
   placeholder?: string;
-  btnText: string;
+  btnText: string | LucideIcon;
   onSearch?: (query: string) => void;
 }
 
@@ -17,31 +17,8 @@ export default function SearchAndFilters({
   onSearch,
 }: SearchAndFiltersProps) {
   const [query, setQuery] = useState('');
-  const debounceRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    // debounce 600ms to prevent throttling
-    if (debounceRef.current) {
-      window.clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = window.setTimeout(() => {
-      onSearch?.(query.trim());
-    }, 600);
-
-    return () => {
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-    };
-  }, [query, onSearch]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (debounceRef.current) window.clearTimeout(debounceRef.current);
-      onSearch?.(query.trim());
-    }
-  };
+  const Icon = btnText;
 
   return (
     <Card>
@@ -54,11 +31,14 @@ export default function SearchAndFilters({
               className="pl-10"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
             />
           </div>
           <Button variant="outline" onClick={() => onSearch?.(query.trim())}>
-            {btnText}
+            {typeof btnText === 'string' ? (
+              btnText
+            ) : (
+              <Icon className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </CardContent>
