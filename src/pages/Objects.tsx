@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import Title from '@/components/common/Title';
 import Layout from '@/components/layouts/Layout';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,8 @@ export default function Objects() {
   // const [page, setPage] = useState<number>();
   // const [limit, setLimit] = useState<number>();
   const [total, setTotal] = useState<number>(0);
+  const [searching, setSearching] = useState<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const fetchObjects = async () => {
@@ -30,6 +32,35 @@ export default function Objects() {
 
     fetchObjects();
   }, []);
+
+  const handleSearch = async (query: string) => {
+    // Cancel previous request if still pending
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+
+    try {
+      setSearching(true);
+      const url = query
+        ? `/object/search?name=${encodeURIComponent(query)}`
+        : '/object';
+      const response = await api.get(url, {
+        signal: abortControllerRef.current.signal,
+      });
+      setObjects(response.data.items || []);
+      setTotal(response.data.total ?? response.data.items?.length ?? 0);
+    } catch (error: unknown) {
+      // Ignore abort errors (previous requests cancelled)
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Erro na busca:', error);
+      }
+    } finally {
+      setSearching(false);
+    }
+  };
 
   const rows = useMemo(() => {
     return objects.slice(0, 5).map((obj) => (
@@ -93,7 +124,11 @@ export default function Objects() {
         </div>
 
         {/* Search and Filters */}
-        <SearchAndFilters placeholder="Buscar objetos..." btnText="Filtros" />
+        <SearchAndFilters
+          placeholder="Buscar objetos..."
+          btnText="Filtros"
+          onSearch={handleSearch}
+        />
 
         {/* Objects Table */}
         <Card>
