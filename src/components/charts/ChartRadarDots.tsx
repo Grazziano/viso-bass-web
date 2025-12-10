@@ -15,19 +15,26 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { cn } from '@/lib/utils';
 
 export const description = 'A radar chart with dots';
 
 const chartConfig = {
   count: {
     label: 'Objetos',
-    color: 'var(--chart-2)',
+    // color: 'var(--chart-2)',
+    color: '#2B7FFF',
   },
 } satisfies ChartConfig;
 
 type RadarPoint = { name: string; count: number };
 
-export function ChartRadarDots({ data }: { data: RadarPoint[] }) {
+interface ChartRadarDotsProps {
+  data: RadarPoint[];
+  className?: string;
+}
+
+export function ChartRadarDots({ data, className }: ChartRadarDotsProps) {
   return (
     <Card>
       <CardHeader className="items-center">
@@ -37,7 +44,7 @@ export function ChartRadarDots({ data }: { data: RadarPoint[] }) {
       <CardContent className="pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className={cn('mx-auto aspect-square', className)}
         >
           <RadarChart data={data}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
