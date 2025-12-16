@@ -1,9 +1,10 @@
-import { Database, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/useAuth';
 import { ModeToggle } from './mode-toggle';
+import Logo from './Logo';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -19,9 +20,7 @@ export default function Header() {
     <header className="border-b bg-card sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link to="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-            <Database className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <Logo size="md" />
           <div>
             <h1 className="text-xl font-bold">VISO-BASS</h1>
             <p className="text-xs text-muted-foreground">Social IoT Data</p>

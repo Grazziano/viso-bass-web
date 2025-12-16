@@ -1,11 +1,11 @@
 import {
-  Database,
   FolderKanban,
   Github,
   // Mail,
   ExternalLink,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -45,9 +45,7 @@ export default function Footer() {
           {/* Logo e descrição */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Database className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <Logo size="md" />
               <div>
                 <h3 className="text-lg font-bold">VISO-BASS</h3>
                 <p className="text-xs text-muted-foreground">Social IoT Data</p>
