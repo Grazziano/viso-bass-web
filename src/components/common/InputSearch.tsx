@@ -11,7 +11,7 @@ export default function InputSearch({
 }: SearchInputProps) {
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent className="">
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input placeholder={placeholder} className="pl-10" />
