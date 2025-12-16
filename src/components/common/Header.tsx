@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/useAuth';
+import { ModeToggle } from './mode-toggle';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -26,10 +27,13 @@ export default function Header() {
             <p className="text-xs text-muted-foreground">Social IoT Data</p>
           </div>
         </Link>
-        <Button variant="ghost" onClick={handleLogout} size="sm">
-          <LogOut className="w-4 h-4 mr-2" />
-          Sair
-        </Button>
+        <div className="flex items-center gap-2">
+          <ModeToggle />
+          <Button variant="ghost" onClick={handleLogout} size="sm">
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
+          </Button>
+        </div>
       </div>
     </header>
   );
