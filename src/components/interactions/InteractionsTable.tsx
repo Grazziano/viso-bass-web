@@ -60,8 +60,8 @@ export default function InteractionsTable({
                       variant="outline"
                       className={cn(
                         interaction.inter_feedback
-                          ? 'bg-green-300 text-green-600'
-                          : 'bg-red-300 text-red-600'
+                          ? 'bg-chart-2/20 text-chart-2'
+                          : 'bg-destructive/20 text-destructive'
                       )}
                     >
                       {interaction.inter_feedback ? 'Positiva' : 'Negativa'}

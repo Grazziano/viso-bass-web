@@ -141,7 +141,7 @@ export default function Dashboard() {
       value: formatNumberBR(objects, 0),
       loading: !objects,
       change: '+12%',
-      color: 'text-blue-500',
+      color: 'text-primary',
     },
     {
       icon: Layers,

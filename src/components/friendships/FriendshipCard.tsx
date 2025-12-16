@@ -13,9 +13,9 @@ export default function FriendshipCard({ friendships }: FriendshipCardProps) {
   );
 
   return (
-    <Card className="bg-blue-500 text-white">
+    <Card className="bg-primary text-primary-foreground">
       <CardHeader>
-        <CardTitle className="text-white">Relações Mais Relevantes</CardTitle>
+        <CardTitle className="text-primary-foreground">Relações Mais Relevantes</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

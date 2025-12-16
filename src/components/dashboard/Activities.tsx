@@ -26,7 +26,7 @@ export default function Activities({ activities }: ActivityProps) {
             >
               <div>
                 <p className="font-medium">
-                  <span className="text-blue-500">{activity.type}</span>{' '}
+                  <span className="text-primary">{activity.type}</span>{' '}
                   {activity.action}: {activity.name}
                 </p>
                 <p className="text-sm text-muted-foreground">{activity.time}</p>

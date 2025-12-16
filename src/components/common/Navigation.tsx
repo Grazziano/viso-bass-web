@@ -39,7 +39,7 @@ export default function Navigation() {
                   className={cn(
                     'whitespace-nowrap',
                     isActive &&
-                      'shadow-md bg-blue-500 text-white hover:bg-blue-600'
+                      'shadow-md bg-primary text-primary-foreground hover:bg-primary/90'
                   )}
                 >
                   <Icon className="w-4 h-4 mr-2" />

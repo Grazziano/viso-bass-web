@@ -20,7 +20,7 @@ export default function EnvironmentCard(props: IEnvironment) {
           </div>
           <Badge
             variant={props.env_total_valid === 0 ? 'default' : 'secondary'}
-            className="bg-blue-500 text-white"
+            className="bg-primary text-primary-foreground"
           >
             {props.env_total_valid === 0 ? 'Operacional' : 'Manutenção'}
           </Badge>

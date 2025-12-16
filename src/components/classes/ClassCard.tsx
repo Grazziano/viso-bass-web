@@ -22,7 +22,7 @@ export default function ClassCard({
           <CardTitle className="text-lg">{name}</CardTitle>
           <Badge
             variant="outline"
-            className="px-2 py-1 bg-blue-100 text-blue-800"
+            className="px-2 py-1 bg-primary/10 text-primary"
           >
             {objects.length} objetos
           </Badge>
@@ -39,7 +39,7 @@ export default function ClassCard({
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 hover:bg-blue-500 hover:text-white transition-colors"
+            className="flex-1 hover:bg-primary hover:text-primary-foreground transition-colors"
           >
             <Edit className="w-4 h-4 mr-2" />
             Editar
@@ -47,7 +47,7 @@ export default function ClassCard({
           <Button
             variant="outline"
             size="sm"
-            className="hover:bg-red-500 hover:text-white"
+            className="hover:bg-destructive hover:text-destructive-foreground"
           >
             <Trash2 className="w-4 h-4" />
           </Button>

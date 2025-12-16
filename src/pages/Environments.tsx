@@ -47,7 +47,7 @@ export default function Environments() {
             subtitle="Gerencie os ambientes e suas localizações"
           />
 
-          <Button className="bg-blue-500 hover:bg-blue-600">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Plus className="w-4 h-4 mr-2" />
             Novo Ambiente
           </Button>

@@ -62,7 +62,7 @@ export function ChartLineLabel({
         <CardDescription className="flex justify-between items-center">
           {description}
           <Button
-            className="bg-blue-500 hover:bg-blue-600 hover:text-white"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
             onClick={onButtonClick}
           >
             Ver últimos {days === 7 ? 30 : 7} dias

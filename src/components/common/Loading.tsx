@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <Layout>
       <div className="flex justify-center py-20">
-        <Spinner className="size-8 text-blue-500" />
+        <Spinner className="size-8 text-primary" />
       </div>
     </Layout>
   );

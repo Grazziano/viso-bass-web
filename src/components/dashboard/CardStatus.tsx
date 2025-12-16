@@ -40,8 +40,8 @@ export default function CardStatus({
           <>
             <div className="text-2xl font-bold">{value}</div>
             <div className="flex items-center text-xs text-muted-foreground mt-1">
-              <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
-              <span className="text-green-500">{change}</span>
+              <TrendingUp className="w-3 h-3 mr-1 text-chart-2" />
+              <span className="text-chart-2">{change}</span>
               <span className="ml-1">vs mês anterior</span>
             </div>
           </>

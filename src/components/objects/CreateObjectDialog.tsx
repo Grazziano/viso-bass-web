@@ -100,7 +100,7 @@ export default function CreateObjectDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
           <Plus className="w-4 h-4 mr-2" />
           Novo Objeto
         </Button>
@@ -197,7 +197,7 @@ export default function CreateObjectDialog({
           <AlertDialogAction
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-blue-500 hover:bg-blue-600 text-white"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {loading ? 'Salvando...' : 'Salvar'}
           </AlertDialogAction>

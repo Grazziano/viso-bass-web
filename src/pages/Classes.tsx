@@ -42,7 +42,7 @@ export default function Classes() {
             subtitle="Gerencie as classes cadastradas no sistema"
           />
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Plus className="w-4 h-4 mr-2" />
             Nova Classe
           </Button>

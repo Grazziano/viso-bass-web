@@ -31,8 +31,8 @@ export default function About() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader className="space-y-2">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Info className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Info className="w-5 h-5 text-primary-foreground" />
               </div>
               <CardTitle>O que é o VISO-BASS</CardTitle>
               <CardDescription>
@@ -64,8 +64,8 @@ export default function About() {
 
           <Card>
             <CardHeader className="space-y-2">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Database className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Database className="w-5 h-5 text-primary-foreground" />
               </div>
               <CardTitle>Tecnologias</CardTitle>
               <CardDescription>Stack utilizada na aplicação</CardDescription>
@@ -108,8 +108,8 @@ export default function About() {
 
           <Card>
             <CardHeader className="space-y-2">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Layers className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Layers className="w-5 h-5 text-primary-foreground" />
               </div>
               <CardTitle>Módulos do sistema</CardTitle>
               <CardDescription>
@@ -164,8 +164,8 @@ export default function About() {
 
           <Card>
             <CardHeader className="space-y-2">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <LinkIcon className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <LinkIcon className="w-5 h-5 text-primary-foreground" />
               </div>
               <CardTitle>Informações adicionais</CardTitle>
               <CardDescription>Versão e formas de contato</CardDescription>

@@ -50,11 +50,11 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4 bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4 bg-background">
       <Card className="w-full max-w-md shadow-glow">
         <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow bg-blue-500">
-            <Database className="w-8 h-8 text-white" />
+          <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow bg-primary">
+            <Database className="w-8 h-8 text-primary-foreground" />
           </div>
           <CardTitle className="text-2xl font-bold">VISO-BASS</CardTitle>
           <CardDescription>
@@ -95,7 +95,7 @@ export default function Login() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={loading}
             >
               {loading ? 'Entrando...' : 'Entrar'}
@@ -105,7 +105,7 @@ export default function Login() {
             <span className="text-muted-foreground">Não tem uma conta? </span>
             <Link
               to="/register"
-              className="hover:underline font-medium text-blue-500"
+              className="hover:underline font-medium text-primary"
             >
               Registre-se
             </Link>

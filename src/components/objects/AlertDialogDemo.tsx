@@ -77,8 +77,8 @@ export function AlertDialogDemo({ btnText, obj }: AlertDialogDemoProps) {
                     variant={obj.obj_status === 1 ? 'default' : 'outline'}
                     className={
                       obj.obj_status === 1
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                        ? 'bg-muted text-foreground'
+                        : 'bg-destructive/10 text-destructive'
                     }
                   >
                     {obj.obj_status === 1 ? 'Ativo' : 'Inativo'}
@@ -120,7 +120,7 @@ export function AlertDialogDemo({ btnText, obj }: AlertDialogDemoProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Fechar</AlertDialogCancel>
-          <AlertDialogAction className="bg-blue-500 hover:bg-blue-600 text-white">
+          <AlertDialogAction className="bg-primary hover:bg-primary/90 text-primary-foreground">
             Confirmar
           </AlertDialogAction>
         </AlertDialogFooter>

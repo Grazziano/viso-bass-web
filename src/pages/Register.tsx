@@ -50,11 +50,11 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4 bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4 bg-background">
       <Card className="w-full max-w-md shadow-glow">
         <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center shadow-glow">
-            <Database className="w-8 h-8 text-white" />
+          <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-glow">
+            <Database className="w-8 h-8 text-primary-foreground" />
           </div>
           <CardTitle className="text-2xl font-bold">Criar Conta</CardTitle>
           <CardDescription>
@@ -111,7 +111,7 @@ export default function Register() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={loading}
             >
               {loading ? 'Criando conta...' : 'Registrar'}
@@ -121,7 +121,7 @@ export default function Register() {
             <span className="text-muted-foreground">Já tem uma conta? </span>
             <Link
               to="/login"
-              className="text-blue-500 hover:underline font-medium"
+              className="text-primary hover:underline font-medium"
             >
               Faça login
             </Link>

@@ -55,7 +55,7 @@ export default function FriendshipsTable({
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-blue-500" />
+                          <TrendingUp className="w-4 h-4 text-primary" />
                           <span className="font-bold">#{index + 1}</span>
                         </div>
                       </td>
@@ -66,7 +66,7 @@ export default function FriendshipsTable({
                         <div className="flex items-center gap-2">
                           <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-blue-500 transition-all"
+                              className="h-full bg-primary transition-all"
                               style={{
                                 width: `${percentage}%`,
                               }}

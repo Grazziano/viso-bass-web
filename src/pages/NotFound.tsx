@@ -16,19 +16,19 @@ export default function NotFound() {
         <div className="mb-8 flex justify-center">
           <div className="relative">
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
-            <div className="relative bg-linear-to-br bg-blue-200 from-primary/20 to-accent/20 p-6 rounded-full border border-blue-500 shadow-lg">
-              <AlertTriangle className="w-16 h-16 text-blue-500" />
+            <div className="relative bg-linear-to-br bg-primary/20 from-primary/20 to-accent/20 p-6 rounded-full border border-primary shadow-lg">
+              <AlertTriangle className="w-16 h-16 text-primary" />
             </div>
           </div>
         </div>
 
         {/* 404 Text */}
-        <h1 className="mb-4 text-8xl font-bold bg-linear-to-r from-primary via-accent to-primary bg-clip-text text-blue-500 animate-pulse">
+        <h1 className="mb-4 text-8xl font-bold bg-linear-to-r from-primary via-accent to-primary bg-clip-text text-primary animate-pulse">
           404
         </h1>
 
         {/* Message */}
-        <h2 className="mb-3 text-2xl font-semibold text-gray-500">
+        <h2 className="mb-3 text-2xl font-semibold text-muted-foreground">
           Página Não Encontrada
         </h2>
         <p className="mb-8 text-muted-foreground max-w-md mx-auto">
@@ -57,7 +57,7 @@ export default function NotFound() {
             Voltar
           </Button>
           <Link to="/login">
-            <Button className="gap-2 w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white">
+            <Button className="gap-2 w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
               <Home className="w-4 h-4" />
               Página Inicial
             </Button>
