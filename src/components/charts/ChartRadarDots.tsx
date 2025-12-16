@@ -22,8 +22,10 @@ export const description = 'A radar chart with dots';
 const chartConfig = {
   count: {
     label: 'Objetos',
-    // color: 'var(--chart-2)',
-    color: '#2B7FFF',
+    theme: {
+      light: 'oklch(0.6746 0.1414 261.3380)',
+      dark: 'oklch(0.5880 0.0993 245.7394)',
+    },
   },
 } satisfies ChartConfig;
 

@@ -29,8 +29,10 @@ export const description = 'A line chart with a label';
 const chartConfig = {
   interactions: {
     label: 'Interações',
-    // color: 'var(--chart-1)',
-    color: '#2B7FFF',
+    theme: {
+      light: 'oklch(0.6487 0.1538 150.3071)',
+      dark: 'oklch(0.6487 0.1538 150.3071)',
+    },
   },
 } satisfies ChartConfig;
 
