@@ -14,6 +14,7 @@ import {
   Users,
   Database,
   Link as LinkIcon,
+  QrCode,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -44,15 +45,16 @@ export default function About() {
                 >
                   VISO
                 </a>{' '}
-                (Visualization of Social Objects) para persistência,
+                (Virtual Interactions between Social Objects) para persistência,
                 visualização e análise de dados em ecossistemas de Social IoT.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm leading-relaxed text-muted-foreground">
               <p>
-                O VISO-BASS organiza entidades como objetos, classes, ambientes,
-                interações e relações sociais, permitindo observar como
-                dispositivos e agentes se conectam e cooperam.
+                O VISO-BASS (VISO-Based API for Structured Storage) organiza
+                entidades como objetos, classes, ambientes, interações e
+                relações sociais, permitindo observar como dispositivos e
+                agentes se conectam e cooperam.
               </p>
               <p>
                 Esta interface web foi construída para facilitar a navegação
@@ -165,7 +167,7 @@ export default function About() {
           <Card>
             <CardHeader className="space-y-2">
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <LinkIcon className="w-5 h-5 text-primary-foreground" />
+                <QrCode className="w-5 h-5 text-primary-foreground" />
               </div>
               <CardTitle>Informações adicionais</CardTitle>
               <CardDescription>Versão e formas de contato</CardDescription>
@@ -177,6 +179,79 @@ export default function About() {
                 o menu superior para navegar ou entre em contato com os
                 responsáveis pelo projeto.
               </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="space-y-2">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <CardTitle>Contribuição</CardTitle>
+              <CardDescription>
+                Formas de colaborar com o VISO-BASS
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+              <p>
+                O projeto está em constante evolução. Seu feedback é essencial
+                para aprimorar a usabilidade, as visualizações e as análises
+                oferecidas pela plataforma.
+              </p>
+              <p>
+                Caso queira contribuir, você pode compartilhar sugestões de
+                melhorias, apontar problemas encontrados durante o uso ou propor
+                novas visualizações e métricas a serem incorporadas.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="space-y-2">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <LinkIcon className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <CardTitle>Links relacionados</CardTitle>
+              <CardDescription>
+                Material complementar sobre o modelo e o projeto
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-muted-foreground">
+              <a
+                href={link}
+                target="_blank"
+                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
+              >
+                Artigo do modelo VISO na SOL-SBC
+              </a>
+              <a
+                href="https://www.ufpel.edu.br"
+                target="_blank"
+                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
+              >
+                Universidade Federal de Pelotas (UFPel)
+              </a>
+              <a
+                href="https://github.com/Grazziano/viso-bass-api"
+                target="_blank"
+                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
+              >
+                Repositório da API do projeto no GitHub
+              </a>
+              <a
+                href="https://github.com/Grazziano/viso-bass-web"
+                target="_blank"
+                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
+              >
+                Repositório do frontend do projeto no GitHub
+              </a>
+              <a
+                href="https://www.linkedin.com/in/grazziano-fagundes/"
+                target="_blank"
+                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
+              >
+                Perfil do criador no LinkedIn
+              </a>
             </CardContent>
           </Card>
         </div>
