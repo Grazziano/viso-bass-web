@@ -16,14 +16,31 @@ export default function AuthProvider({ children }: Props) {
     localStorage.getItem('token')
   );
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [userLoaded, setUserLoaded] = useState(false);
 
   useEffect(() => {
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // Buscar informações do usuário apenas uma vez
+      if (!userLoaded) {
+        api
+          .get('/auth/me')
+          .then((response) => {
+            setUser({
+              email: response.data.email || '',
+              name: response.data.name,
+            });
+            setUserLoaded(true);
+          })
+          .catch(() => {
+            // Se falhar, marcar como carregado para não tentar novamente
+            setUserLoaded(true);
+          });
+      }
     } else {
       delete api.defaults.headers.common['Authorization'];
     }
-  }, [token]);
+  }, [token, userLoaded]);
 
   const login = async (email: string, password: string) => {
     const data = await authService.login({ email, password });
@@ -31,7 +48,20 @@ export default function AuthProvider({ children }: Props) {
     localStorage.setItem('token', newToken);
     api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
     setToken(newToken);
-    setUser({ email });
+
+    // Tentar buscar informações do usuário
+    try {
+      const userData = await api.get('/auth/me');
+      setUser({
+        email: userData.data.email || email,
+        name: userData.data.name,
+      });
+      setUserLoaded(true);
+    } catch {
+      // Se não conseguir buscar, usar apenas o email
+      setUser({ email });
+      setUserLoaded(true);
+    }
   };
 
   const logout = () => {
@@ -39,6 +69,7 @@ export default function AuthProvider({ children }: Props) {
     delete api.defaults.headers.common['Authorization'];
     setToken(null);
     setUser(null);
+    setUserLoaded(false);
   };
 
   const value: AuthContextValue = useMemo(
