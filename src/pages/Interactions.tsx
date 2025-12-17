@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
-import { ChartRadarDots } from '@/components/charts/ChartRadarDots';
+import { ChartBarDays } from '@/components/charts/ChartBarDays';
 import Title from '@/components/common/Title';
 import InteractionsTable from '@/components/interactions/InteractionsTable';
 import Layout from '@/components/layouts/Layout';
@@ -17,10 +17,14 @@ export default function Interactions() {
   const [timeSeries, setTimeSeries] = useState<
     { date: string; interactions: number }[]
   >([]);
-  const [classDistribution, setClassDistribution] = useState<
-    { name: string; count: number }[]
-  >([]);
+  // const [classDistribution, setClassDistribution] = useState<
+  //   { name: string; count: number }[]
+  // >([]);
   const [days, setDays] = useState<number>(7);
+  const [period, setPeriod] = useState<'month' | 'week'>('month');
+  const [countByDay, setCountByDay] = useState<
+    { day: string; count: number }[]
+  >([]);
 
   console.log(limit);
   console.log(page);
@@ -59,32 +63,70 @@ export default function Interactions() {
     fetchTimeSeries();
   }, [days]);
 
+  // useEffect(() => {
+  //   const fetchClassDistribution = async () => {
+  //     try {
+  //       const response = await api.get('/class');
+  //       const items = (response.data?.items ?? []) as any[];
+
+  //       const distribution = items
+  //         .map((c) => ({
+  //           name: c.class_name ?? c.name ?? '—',
+  //           count: Array.isArray(c.objects)
+  //             ? c.objects.length
+  //             : Number(c.count ?? 0),
+  //         }))
+  //         .filter((d) => d.name && typeof d.count === 'number')
+  //         .filter((d) => d.count > 0) // ignore empty classes
+  //         .sort((a, b) => b.count - a.count) // highest first
+  //         .slice(0, 8); // limit to top 8 for readability
+
+  //       setClassDistribution(distribution);
+  //     } catch (error) {
+  //       console.error('Erro ao carregar distribuição por classe', error);
+  //     }
+  //   };
+
+  //   fetchClassDistribution();
+  // }, []);
+
   useEffect(() => {
-    const fetchClassDistribution = async () => {
+    const fetchCountByDay = async () => {
       try {
-        const response = await api.get('/class');
-        const items = (response.data?.items ?? []) as any[];
+        const response = await api.get(
+          '/interaction/count-by-day?period=' + period
+        );
+        let data = (response.data ?? []) as any[];
 
-        const distribution = items
-          .map((c) => ({
-            name: c.class_name ?? c.name ?? '—',
-            count: Array.isArray(c.objects)
-              ? c.objects.length
-              : Number(c.count ?? 0),
-          }))
-          .filter((d) => d.name && typeof d.count === 'number')
-          .filter((d) => d.count > 0) // ignore empty classes
-          .sort((a, b) => b.count - a.count) // highest first
-          .slice(0, 8); // limit to top 8 for readability
+        // Se a resposta for um objeto com uma propriedade de array, extrair
+        if (!Array.isArray(data) && typeof data === 'object') {
+          const obj = data as any;
+          data = obj.data || obj.items || Object.values(obj).flat();
+        }
 
-        setClassDistribution(distribution);
+        // console.log('Raw data from API:', data);
+
+        // Transformar para o formato esperado
+        const formatted = (Array.isArray(data) ? data : []).map((item) => {
+          // Suportar múltiplos formatos de campo de dia e contagem
+          const dayValue = item.day ?? item.date ?? item._id ?? '—';
+          const countValue = item.count ?? item.total ?? item.interactions ?? 0;
+
+          return {
+            day: String(dayValue),
+            count: Number(countValue) || 0,
+          };
+        });
+
+        // console.log('Formatted data for chart:', formatted);
+        setCountByDay(formatted);
       } catch (error) {
-        console.error('Erro ao carregar distribuição por classe', error);
+        console.error('Erro ao carregar contagem por dia:', error);
       }
     };
 
-    fetchClassDistribution();
-  }, []);
+    fetchCountByDay();
+  }, [period]);
 
   if (loading) {
     return <Loading />;
@@ -100,7 +142,14 @@ export default function Interactions() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChartRadarDots data={classDistribution} className="h-120" />
+          <ChartBarDays
+            data={countByDay}
+            className="w-full h-96"
+            period={period}
+            onButtonClick={() =>
+              setPeriod(period === 'month' ? 'week' : 'month')
+            }
+          />
 
           <ChartLineLabel
             title="Interações ao longo do tempo"
@@ -108,7 +157,6 @@ export default function Interactions() {
             days={days}
             data={timeSeries}
             onButtonClick={() => setDays(days === 7 ? 30 : 7)}
-            // className="h-120"
           />
         </div>
 
