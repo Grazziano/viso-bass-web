@@ -8,9 +8,17 @@ import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
 import InputSearch from '@/components/common/InputSearch';
 
+type ClassItem = {
+  id: string;
+  class_name: string;
+  class_function: string[];
+  objects: string[];
+};
+
 export default function Classes() {
-  const [classList, setClassList] = useState<any[]>([]);
+  const [classList, setClassList] = useState<ClassItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  // const [objectCounts, setObjectCounts] = useState<{ name: string; count: number }[]>([]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -28,6 +36,31 @@ export default function Classes() {
 
     fetchClasses();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchObjectCounts = async () => {
+  //     try {
+  //       const response = await api.get('/class/object-counts');
+  //       const raw = Array.isArray(response.data?.items) ? response.data.items : response.data;
+  //       type CountsItem = {
+  //         class_name?: string;
+  //         name?: string;
+  //         count?: number;
+  //         objectsCount?: number;
+  //         total?: number;
+  //       };
+  //       const mapped = (raw as CountsItem[]).map((item) => ({
+  //         name: (item.class_name ?? item.name ?? 'Desconhecido') as string,
+  //         count: item.count ?? item.objectsCount ?? item.total ?? 0,
+  //       }));
+  //       setObjectCounts(mapped);
+  //     } catch (error) {
+  //       console.log('Erro ao carregar distribuição por classe', error);
+  //     }
+  //   };
+
+  //   fetchObjectCounts();
+  // }, []);
 
   if (loading) {
     return <Loading />;
