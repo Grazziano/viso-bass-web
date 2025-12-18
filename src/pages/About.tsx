@@ -21,6 +21,55 @@ import { Link } from 'react-router-dom';
 export default function About() {
   const link = 'https://sol.sbc.org.br/index.php/semish/article/view/25072';
 
+  const technologies = [
+    'React 19',
+    'Vite 7',
+    'TypeScript',
+    'Tailwind CSS 4',
+    'Shadcn UI',
+    'lucide-react',
+    'sonner',
+    'NestJS 11',
+    'MongoDB',
+    'Jest',
+  ];
+
+  const applicationLinks = [
+    { icon: Info, text: 'Dashboard', link: '/dashboard' },
+    { icon: Layers, text: 'Objetos', link: '/objects' },
+    { icon: Layers, text: 'Classes', link: '/classes' },
+    { icon: Users, text: 'Interações', link: '/interactions' },
+    { icon: Globe2, text: 'Ambientes', link: '/environments' },
+    { icon: Users, text: 'Relações', link: '/friendships' },
+  ];
+
+  const relatedLinks = [
+    {
+      text: 'Artigo do modelo VISO na SOL-SBC',
+      link: link,
+    },
+    {
+      text: 'Universidade Federal de Pelotas (UFPel)',
+      link: 'https://www.ufpel.edu.br',
+    },
+    {
+      text: 'Repositório da API do projeto no GitHub',
+      link: 'https://github.com/Grazziano/viso-bass-api',
+    },
+    {
+      text: 'Repositório do frontend do projeto no GitHub',
+      link: 'https://github.com/Grazziano/viso-bass-web',
+    },
+    {
+      text: 'Outros projetos relacionados',
+      link: 'https://grazziano.github.io/projetos-siot-ufpel/',
+    },
+    {
+      text: 'Perfil do criador no LinkedIn',
+      link: 'https://www.linkedin.com/in/grazziano-fagundes/',
+    },
+  ];
+
   return (
     <Layout>
       <div className="space-y-8">
@@ -74,36 +123,11 @@ export default function About() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  React 19
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  Vite 7
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  TypeScript
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  Tailwind CSS 4
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  Shadcn UI
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  lucide-react
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  sonner
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  NestJS 11
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  MongoDB
-                </span>
-                <span className="px-3 py-1 rounded-md border text-sm">
-                  Jest
-                </span>
+                {technologies.map((item) => (
+                  <span className="px-3 py-1 rounded-md border text-sm">
+                    {item}
+                  </span>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -119,48 +143,15 @@ export default function About() {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Link
-                to="/dashboard"
-                className="flex items-center gap-2 px-3 py-2 rounded-md border"
-              >
-                <Info className="w-4 h-4" />
-                Dashboard
-              </Link>
-              <Link
-                to="/objects"
-                className="flex items-center gap-2 px-3 py-2 rounded-md border"
-              >
-                <Layers className="w-4 h-4" />
-                Objetos
-              </Link>
-              <Link
-                to="/classes"
-                className="flex items-center gap-2 px-3 py-2 rounded-md border"
-              >
-                <Layers className="w-4 h-4" />
-                Classes
-              </Link>
-              <Link
-                to="/interactions"
-                className="flex items-center gap-2 px-3 py-2 rounded-md border"
-              >
-                <Users className="w-4 h-4" />
-                Interações
-              </Link>
-              <Link
-                to="/environments"
-                className="flex items-center gap-2 px-3 py-2 rounded-md border"
-              >
-                <Globe2 className="w-4 h-4" />
-                Ambientes
-              </Link>
-              <Link
-                to="/friendships"
-                className="flex items-center gap-2 px-3 py-2 rounded-md border"
-              >
-                <Users className="w-4 h-4" />
-                Relações
-              </Link>
+              {applicationLinks.map((item) => (
+                <Link
+                  to={item.link}
+                  className="flex items-center gap-2 px-3 py-2 rounded-md border"
+                >
+                  <item.icon className="w-4 h-4" />
+                  {item.text}
+                </Link>
+              ))}
             </CardContent>
           </Card>
 
@@ -217,41 +208,15 @@ export default function About() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <a
-                href={link}
-                target="_blank"
-                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
-              >
-                Artigo do modelo VISO na SOL-SBC
-              </a>
-              <a
-                href="https://www.ufpel.edu.br"
-                target="_blank"
-                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
-              >
-                Universidade Federal de Pelotas (UFPel)
-              </a>
-              <a
-                href="https://github.com/Grazziano/viso-bass-api"
-                target="_blank"
-                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
-              >
-                Repositório da API do projeto no GitHub
-              </a>
-              <a
-                href="https://github.com/Grazziano/viso-bass-web"
-                target="_blank"
-                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
-              >
-                Repositório do frontend do projeto no GitHub
-              </a>
-              <a
-                href="https://www.linkedin.com/in/grazziano-fagundes/"
-                target="_blank"
-                className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
-              >
-                Perfil do criador no LinkedIn
-              </a>
+              {relatedLinks.map((item) => (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"
+                >
+                  {item.text}
+                </a>
+              ))}
             </CardContent>
           </Card>
         </div>
