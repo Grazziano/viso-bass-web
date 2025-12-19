@@ -11,7 +11,15 @@ import CreateObjectDialog from '@/components/objects/CreateObjectDialog';
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
 import { Search } from 'lucide-react';
-// import { ChartPieLabel } from '@/components/charts/ChartPieLabel';
+import { ChartPieLabel } from '@/components/charts/ChartPieLabel';
+
+type StatusItem = {
+  status?: number | string;
+  name?: string;
+  count?: number;
+  total?: number;
+  value?: number;
+};
 
 export default function Objects() {
   const [objects, setObjects] = useState<IObject[]>([]);
@@ -20,9 +28,9 @@ export default function Objects() {
   // const [limit, setLimit] = useState<number>();
   const [total, setTotal] = useState<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
-  // const [statusCounts, setStatusCounts] = useState<
-  //   { name: string; value: number }[]
-  // >([]);
+  const [statusCounts, setStatusCounts] = useState<
+    { name: string; value: number }[]
+  >([]);
 
   useEffect(() => {
     const fetchObjects = async () => {
@@ -37,37 +45,31 @@ export default function Objects() {
     fetchObjects();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchStatusCounts = async () => {
-  //     try {
-  //       const response = await api.get('/object/status-counts');
-  //       const raw = Array.isArray(response.data?.items)
-  //         ? response.data.items
-  //         : response.data;
-  //       type StatusItem = {
-  //         status?: number | string;
-  //         name?: string;
-  //         count?: number;
-  //         total?: number;
-  //         value?: number;
-  //       };
-  //       const mapped = (raw as StatusItem[]).map((item) => {
-  //         const statusLabel =
-  //           typeof item.status === 'number'
-  //             ? item.status === 1
-  //               ? 'Ativo'
-  //               : 'Inativo'
-  //             : item.name ?? String(item.status ?? 'Desconhecido');
-  //         const val = item.value ?? item.count ?? item.total ?? 0;
-  //         return { name: statusLabel as string, value: val };
-  //       });
-  //       setStatusCounts(mapped);
-  //     } catch (error) {
-  //       console.error('Erro ao carregar status dos objetos:', error);
-  //     }
-  //   };
-  //   fetchStatusCounts();
-  // }, []);
+  useEffect(() => {
+    const fetchStatusCounts = async () => {
+      try {
+        const response = await api.get('/object/status-counts');
+        const raw = Array.isArray(response.data?.items)
+          ? response.data.items
+          : response.data;
+
+        const mapped = (raw as StatusItem[]).map((item) => {
+          const statusLabel =
+            typeof item.status === 'number'
+              ? item.status === 1
+                ? 'Ativo'
+                : 'Inativo'
+              : item.name ?? String(item.status ?? 'Desconhecido');
+          const val = item.value ?? item.count ?? item.total ?? 0;
+          return { name: statusLabel as string, value: val };
+        });
+        setStatusCounts(mapped);
+      } catch (error) {
+        console.error('Erro ao carregar status dos objetos:', error);
+      }
+    };
+    fetchStatusCounts();
+  }, []);
 
   const handleSearch = async (query: string) => {
     // Cancel previous request if still pending
@@ -157,7 +159,6 @@ export default function Objects() {
         </div>
 
         {/* Status Pie Chart */}
-        {/* 
         <Card>
           <CardHeader>
             <CardTitle>Status dos Objetos</CardTitle>
@@ -171,7 +172,6 @@ export default function Objects() {
             />
           </CardContent>
         </Card>
-        */}
 
         {/* Search and Filters */}
         <SearchAndFilters
