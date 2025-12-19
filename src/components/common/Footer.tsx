@@ -61,8 +61,9 @@ export default function Footer() {
           <div className="flex flex-col gap-3">
             <h4 className="text-sm font-semibold">Links Rápidos</h4>
             <div className="flex flex-col gap-2">
-              {quickLinks.map((link) => (
+              {quickLinks.map((link, index) => (
                 <Link
+                  key={index}
                   to={link.path}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 group"
                 >
@@ -84,8 +85,9 @@ export default function Footer() {
           <div className="flex flex-col gap-3">
             <h4 className="text-sm font-semibold">Repositórios</h4>
             <div className="flex flex-col gap-2">
-              {repositoriesAndProjects.map((item) => (
+              {repositoriesAndProjects.map((item, index) => (
                 <a
+                  key={index}
                   href={item.path}
                   target="_blank"
                   rel="noopener noreferrer"
