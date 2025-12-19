@@ -33,23 +33,25 @@ interface ChartPieLabelProps {
   title?: string;
   description?: string;
   className?: string;
+  colors?: Record<string, string>;
 }
 export function ChartPieLabel({
   data,
   title,
   description,
   className,
+  colors,
 }: ChartPieLabelProps) {
-  const colors = [
-    'var(--color-primary)',
-    'var(--color-secondary)',
-    'var(--color-accent)',
-    'var(--color-destructive)',
-    'var(--color-muted)',
+  const defaultColors = [
+    'var(--chart-1)',
+    'var(--chart-2)',
+    'var(--chart-3)',
+    'var(--chart-4)',
+    'var(--chart-5)',
   ];
   const pieData = data.map((d, i) => ({
     ...d,
-    fill: colors[i % colors.length],
+    fill: (colors && colors[d.name]) || defaultColors[i % defaultColors.length],
   }));
   return (
     <Card className="flex flex-col">

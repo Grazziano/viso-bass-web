@@ -54,12 +54,24 @@ export default function Objects() {
           : response.data;
 
         const mapped = (raw as StatusItem[]).map((item) => {
-          const statusLabel =
-            typeof item.status === 'number'
-              ? item.status === 1
-                ? 'Ativo'
-                : 'Inativo'
-              : item.name ?? String(item.status ?? 'Desconhecido');
+          let statusLabel = '';
+          switch (item.status) {
+            case '0':
+              statusLabel = 'Desconhecido';
+              break;
+            case 'online':
+              statusLabel = 'online';
+              break;
+            case 'offline':
+              statusLabel = 'offline';
+              break;
+            case 'manutenção':
+              statusLabel = 'Manutenção';
+              break;
+            default:
+              break;
+          }
+
           const val = item.value ?? item.count ?? item.total ?? 0;
           return { name: statusLabel as string, value: val };
         });
@@ -168,6 +180,12 @@ export default function Objects() {
               title="Status dos Objetos"
               description="Distribuição de ativos e inativos"
               data={statusCounts}
+              colors={{
+                online: 'var(--chart-5)',
+                offline: 'var(--chart-4)',
+                Manutenção: 'var(--destructive)',
+                Desconhecido: 'var(--chart-3)',
+              }}
               className="w-full h-96"
             />
           </CardContent>
