@@ -1,0 +1,54 @@
+// PASSO 1 - total de documentos
+const total = db['visoobjects'].countDocuments();
+
+// PASSO 2 - cálculo dos percentuais
+const qtdOnline = Math.floor(total * 0.6);
+const qtdOffline = Math.floor(total * 0.2);
+const qtdManutencao = Math.floor(total * 0.15);
+const qtdDesconhecido = total - (qtdOnline + qtdOffline + qtdManutencao);
+
+print({
+  total,
+  qtdOnline,
+  qtdOffline,
+  qtdManutencao,
+  qtdDesconhecido,
+});
+
+// PASSO 3 - resetar status
+db['visoobjects'].updateMany({}, { $set: { obj_status: 0 } });
+
+// PASSO 4 - aplicar ONLINE
+db['visoobjects']
+  .find({})
+  .limit(qtdOnline)
+  .forEach((doc) => {
+    db['visoobjects'].updateOne({ _id: doc._id }, { $set: { obj_status: 1 } });
+  });
+
+// PASSO 5 - aplicar OFFLINE
+db['visoobjects']
+  .find({ obj_status: 0 })
+  .limit(qtdOffline)
+  .forEach((doc) => {
+    db['visoobjects'].updateOne({ _id: doc._id }, { $set: { obj_status: 2 } });
+  });
+
+// PASSO 6 - aplicar MANUTENÇÃO
+db['visoobjects']
+  .find({ obj_status: 0 })
+  .limit(qtdManutencao)
+  .forEach((doc) => {
+    db['visoobjects'].updateOne({ _id: doc._id }, { $set: { obj_status: 3 } });
+  });
+
+// Confere o resultado Executando  agregação no Compass
+db.objects.aggregate([
+  {
+    $group: {
+      _id: '$obj_status',
+      total: { $sum: 1 },
+    },
+  },
+  { $sort: { _id: 1 } },
+]);
