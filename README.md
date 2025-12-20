@@ -7,6 +7,42 @@ Aplicação web para monitoramento de dados da API VISO BASS.
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Shadcn/ui](https://img.shields.io/badge/shadcn/ui-%23000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
+## 📸 Screenshots
+
+### 🏠 Dashboard Principal
+
+![Dashboard](./docs/screenshots/dark/dashboard_novo.png)
+
+**Visão geral das métricas e gráficos principais**
+
+### 📱 Interface Responsiva
+
+<div align="center">
+  <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+    <div style="text-align: center;">
+      <img src="./docs/screenshots/mobile01.png" width="350" alt="Login Page">
+      <!-- <p><em>Tela de Login</em></p> -->
+    </div>
+    <div style="text-align: center;">
+      <img src="./docs/screenshots/mobile02.png" width="350" alt="Dashboard">
+      <!-- <p><em>Dashboard</em></p> -->
+    </div>
+    <!-- <div style="text-align: center;">
+      <img src="screenshots/settings.png" width="180" alt="Settings">
+      <p><em>Configurações</em></p>
+    </div> -->
+  </div>
+</div>
+
+<!-- <div>
+
+![Mobile images 01](./docs/screenshots/mobile01.png)
+![Mobile images 02](./docs/screenshots/mobile02.png)
+
+</div> -->
+
+**Layout adaptado para dispositivos móveis**
+
 ## 🚀 Tecnologias
 
 - React 19
