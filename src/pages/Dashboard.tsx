@@ -12,12 +12,21 @@ import type { IEnvironment } from '@/types/enrironment';
 import type { IFriendship } from '@/types/friendship';
 import { formatNumberBR } from '@/utils/format-number.util';
 import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
+import { ChartPieLabel } from '@/components/charts/ChartPieLabel';
 // import { ChartRadarDots } from '@/components/charts/ChartRadarDots';
 
 interface TimeSeries {
   date: string;
   interactions: number;
 }
+
+type StatusItem = {
+  status?: number | string;
+  name?: string;
+  count?: number;
+  total?: number;
+  value?: number;
+};
 
 export default function Dashboard() {
   const [objects, setObjects] = useState<number>(0);
@@ -36,6 +45,9 @@ export default function Dashboard() {
   // const [classDistribution, setClassDistribution] = useState<
   //   { name: string; count: number }[]
   // >([]);
+  const [statusCounts, setStatusCounts] = useState<
+    { name: string; value: number }[]
+  >([]);
   const [days, setDays] = useState<number>(7);
 
   const handleChangeDays = () => {
@@ -115,6 +127,44 @@ export default function Dashboard() {
 
     fetchTimeSeries();
   }, [days]);
+
+  useEffect(() => {
+    const fetchStatusCounts = async () => {
+      try {
+        const response = await api.get('/object/status-counts');
+        const raw = Array.isArray(response.data?.items)
+          ? response.data.items
+          : response.data;
+
+        const mapped = (raw as StatusItem[]).map((item) => {
+          let statusLabel = '';
+          switch (item.status) {
+            case '0':
+              statusLabel = 'Desconhecido';
+              break;
+            case 'online':
+              statusLabel = 'online';
+              break;
+            case 'offline':
+              statusLabel = 'offline';
+              break;
+            case 'manutenção':
+              statusLabel = 'Manutenção';
+              break;
+            default:
+              break;
+          }
+
+          const val = item.value ?? item.count ?? item.total ?? 0;
+          return { name: statusLabel as string, value: val };
+        });
+        setStatusCounts(mapped);
+      } catch (error) {
+        console.error('Erro ao carregar status dos objetos:', error);
+      }
+    };
+    fetchStatusCounts();
+  }, []);
 
   // useEffect(() => {
   //   const fetchClassDistribution = async () => {
@@ -223,7 +273,7 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ChartLineLabel
             title="Interações ao longo do tempo"
             description="Série temporal de interações"
@@ -234,6 +284,19 @@ export default function Dashboard() {
           />
 
           {/* <ChartRadarDots data={classDistribution} /> */}
+
+          <ChartPieLabel
+            title="Status dos Objetos"
+            description="Distribuição de ativos e inativos"
+            data={statusCounts}
+            colors={{
+              online: 'var(--chart-5)',
+              offline: 'var(--chart-4)',
+              Manutenção: 'var(--destructive)',
+              Desconhecido: 'var(--chart-3)',
+            }}
+            className="w-full h-96"
+          />
         </div>
 
         <Activities activities={recentActivities} />

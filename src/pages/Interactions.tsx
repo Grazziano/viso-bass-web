@@ -141,7 +141,7 @@ export default function Interactions() {
         />
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
           <ChartBarDays
             data={countByDay}
             className="w-full h-96"
@@ -151,13 +151,13 @@ export default function Interactions() {
             }
           />
 
-          <ChartLineLabel
+          {/* <ChartLineLabel
             title="Interações ao longo do tempo"
             description="Série temporal de interações"
             days={days}
             data={timeSeries}
             onButtonClick={() => setDays(days === 7 ? 30 : 7)}
-          />
+          /> */}
         </div>
 
         {/* Search and Filters */}
