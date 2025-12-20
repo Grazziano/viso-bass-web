@@ -123,8 +123,11 @@ export default function About() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {technologies.map((item) => (
-                  <span className="px-3 py-1 rounded-md border text-sm">
+                {technologies.map((item, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 rounded-md border text-sm"
+                  >
                     {item}
                   </span>
                 ))}
@@ -143,8 +146,9 @@ export default function About() {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {applicationLinks.map((item) => (
+              {applicationLinks.map((item, index) => (
                 <Link
+                  key={index}
                   to={item.link}
                   className="flex items-center gap-2 px-3 py-2 rounded-md border"
                 >
@@ -208,8 +212,9 @@ export default function About() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
-              {relatedLinks.map((item) => (
+              {relatedLinks.map((item, index) => (
                 <a
+                  key={index}
                   href={item.link}
                   target="_blank"
                   className="block text-primary underline hover:opacity-80 transition-opacity duration-300 ease-in-out"

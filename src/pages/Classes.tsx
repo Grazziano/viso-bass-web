@@ -86,9 +86,9 @@ export default function Classes() {
 
       {/* Classes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {classList.map((classItem) => (
+        {classList.map((classItem, index) => (
           <ClassCard
-            key={classItem.id}
+            key={index}
             id={classItem.id}
             name={classItem.class_name}
             class_function={classItem.class_function}
