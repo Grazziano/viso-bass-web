@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ClassCard from '@/components/classes/ClassCard';
 import Title from '@/components/common/Title';
 import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
-import InputSearch from '@/components/common/InputSearch';
+import SearchAndFilters from '@/components/common/SearchAndFilters';
 
 type ClassItem = {
   id: string;
@@ -18,6 +18,7 @@ type ClassItem = {
 export default function Classes() {
   const [classList, setClassList] = useState<ClassItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
   // const [objectCounts, setObjectCounts] = useState<{ name: string; count: number }[]>([]);
 
   useEffect(() => {
@@ -36,6 +37,31 @@ export default function Classes() {
 
     fetchClasses();
   }, []);
+
+  const handleSearch = async (query: string) => {
+    // Cancel previous request if still pending
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const url = query
+        ? `/class/search?name=${encodeURIComponent(query)}`
+        : '/class';
+      const response = await api.get(url, {
+        signal: abortControllerRef.current.signal,
+      });
+      setClassList(response.data.items || []);
+    } catch (error: unknown) {
+      // Ignore abort errors (previous requests cancelled)
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Erro na busca:', error);
+      }
+    }
+  };
 
   // useEffect(() => {
   //   const fetchObjectCounts = async () => {
@@ -80,21 +106,25 @@ export default function Classes() {
             Nova Classe
           </Button>
         </div>
-      </div>
 
-      <InputSearch placeholder="Buscar classes..." />
+        <SearchAndFilters
+          placeholder="Buscar classes..."
+          btnText={Search}
+          onSearch={handleSearch}
+        />
 
-      {/* Classes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {classList.map((classItem, index) => (
-          <ClassCard
-            key={index}
-            id={classItem.id}
-            name={classItem.class_name}
-            class_function={classItem.class_function}
-            objects={classItem.objects}
-          />
-        ))}
+        {/* Classes Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {classList.map((classItem, index) => (
+            <ClassCard
+              key={index}
+              id={classItem.id}
+              name={classItem.class_name}
+              class_function={classItem.class_function}
+              objects={classItem.objects}
+            />
+          ))}
+        </div>
       </div>
     </Layout>
   );

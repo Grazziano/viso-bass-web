@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import InputSearch from '@/components/common/InputSearch';
+import { useEffect, useState, useRef } from 'react';
 import Title from '@/components/common/Title';
 import FriendshipCard from '@/components/friendships/FriendshipCard';
 import FriendshipsTable from '@/components/friendships/FriendshipsTable';
 import Layout from '@/components/layouts/Layout';
+import { Search } from 'lucide-react';
+import SearchAndFilters from '@/components/common/SearchAndFilters';
 import type { IFriendship } from '@/types/friendship';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
@@ -16,6 +17,7 @@ export default function Friendships() {
   const [page, setPage] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const fetchFriendships = async () => {
@@ -38,6 +40,32 @@ export default function Friendships() {
     fetchFriendships();
   }, []);
 
+  const handleSearch = async (query: string) => {
+    // Cancel previous request if still pending
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const url = query
+        ? `/pagerank-friendship/search?name=${encodeURIComponent(query)}`
+        : '/pagerank-friendship';
+      const response = await api.get(url, {
+        signal: abortControllerRef.current.signal,
+      });
+      setPagerankFriendship(response.data.items || []);
+      setTotal(response.data.total ?? response.data.items?.length ?? 0);
+    } catch (error: unknown) {
+      // Ignore abort errors (previous requests cancelled)
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Erro na busca:', error);
+      }
+    }
+  };
+
   console.log(limit);
   console.log(page);
 
@@ -54,7 +82,11 @@ export default function Friendships() {
         {/* Top Relationships */}
         <FriendshipCard friendships={pagerankFriendship} />
 
-        <InputSearch placeholder="Buscar relações..." />
+        <SearchAndFilters
+          placeholder="Buscar relações..."
+          btnText={Search}
+          onSearch={handleSearch}
+        />
 
         {/* Friendships Table */}
         <FriendshipsTable friendships={pagerankFriendship} total={total} />

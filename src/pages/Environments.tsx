@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import InputSearch from '@/components/common/InputSearch';
+import { useEffect, useState, useRef } from 'react';
 import Title from '@/components/common/Title';
 import EnvironmentCard from '@/components/environments/EnvironmentCard';
 import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
+import SearchAndFilters from '@/components/common/SearchAndFilters';
 import type { IEnvironment } from '@/types/enrironment';
 
 export default function Environments() {
@@ -15,6 +15,7 @@ export default function Environments() {
   // const [limit, setLimit] = useState<number>(0);
   // const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const fetchEnvironments = async () => {
@@ -36,6 +37,31 @@ export default function Environments() {
     fetchEnvironments();
   }, []);
 
+  const handleSearch = async (query: string) => {
+    // Cancel previous request if still pending
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const url = query
+        ? `/ona-environment/search?name=${encodeURIComponent(query)}`
+        : '/ona-environment';
+      const response = await api.get(url, {
+        signal: abortControllerRef.current.signal,
+      });
+      setEnvironments(response.data.items || []);
+    } catch (error: unknown) {
+      // Ignore abort errors (previous requests cancelled)
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Erro na busca:', error);
+      }
+    }
+  };
+
   if (loading) return <Loading />;
 
   return (
@@ -53,7 +79,11 @@ export default function Environments() {
           </Button>
         </div>
 
-        <InputSearch placeholder="Buscar ambientes..." />
+        <SearchAndFilters
+          placeholder="Buscar ambientes..."
+          btnText={Search}
+          onSearch={handleSearch}
+        />
 
         {/* Environments Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
