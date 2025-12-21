@@ -13,20 +13,7 @@ import type { IFriendship } from '@/types/friendship';
 import { formatNumberBR } from '@/utils/format-number.util';
 import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
 import { ChartPieLabel } from '@/components/charts/ChartPieLabel';
-// import { ChartRadarDots } from '@/components/charts/ChartRadarDots';
-
-interface TimeSeries {
-  date: string;
-  interactions: number;
-}
-
-type StatusItem = {
-  status?: number | string;
-  name?: string;
-  count?: number;
-  total?: number;
-  value?: number;
-};
+import { useCharts } from '@/context/useCharts';
 
 export default function Dashboard() {
   const [objects, setObjects] = useState<number>(0);
@@ -41,26 +28,16 @@ export default function Dashboard() {
   const [lastEnvironment, setLastEnvironment] = useState<IEnvironment>();
   const [lastFriendship, setLastFriendship] = useState<IFriendship>();
 
-  const [fetchTimeSeries, setFetchTimeSeries] = useState<TimeSeries[]>([]);
-  // const [classDistribution, setClassDistribution] = useState<
-  //   { name: string; count: number }[]
-  // >([]);
-  const [statusCounts, setStatusCounts] = useState<
-    { name: string; value: number }[]
-  >([]);
-  const [days, setDays] = useState<number>(7);
+  console.log(
+    'lastInteraction => ',
+    lastInteraction,
+    'lastEnvironment =>',
+    lastEnvironment,
+    'lastFriendship =>',
+    lastFriendship
+  );
 
-  const handleChangeDays = () => {
-    if (days === 7) {
-      setDays(30);
-    } else {
-      setDays(7);
-    }
-  };
-
-  console.log(lastInteraction);
-  console.log(lastEnvironment);
-  console.log(lastFriendship);
+  const { statusCounts, timeSeries, days, setDays } = useCharts();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,77 +89,6 @@ export default function Dashboard() {
 
     fechActivities();
   }, []);
-
-  useEffect(() => {
-    const fetchTimeSeries = async () => {
-      try {
-        const response = await api.get(
-          `/interaction/time-series?range=${days}d`
-        );
-        setFetchTimeSeries(response.data);
-      } catch (error) {
-        console.log('Erro ao carregar time series', error);
-      }
-    };
-
-    fetchTimeSeries();
-  }, [days]);
-
-  useEffect(() => {
-    const fetchStatusCounts = async () => {
-      try {
-        const response = await api.get('/object/status-counts');
-        const raw = Array.isArray(response.data?.items)
-          ? response.data.items
-          : response.data;
-
-        const mapped = (raw as StatusItem[]).map((item) => {
-          let statusLabel = '';
-          switch (item.status) {
-            case '0':
-              statusLabel = 'Desconhecido';
-              break;
-            case 'online':
-              statusLabel = 'online';
-              break;
-            case 'offline':
-              statusLabel = 'offline';
-              break;
-            case 'manutenção':
-              statusLabel = 'Manutenção';
-              break;
-            default:
-              break;
-          }
-
-          const val = item.value ?? item.count ?? item.total ?? 0;
-          return { name: statusLabel as string, value: val };
-        });
-        setStatusCounts(mapped);
-      } catch (error) {
-        console.error('Erro ao carregar status dos objetos:', error);
-      }
-    };
-    fetchStatusCounts();
-  }, []);
-
-  // useEffect(() => {
-  //   const fetchClassDistribution = async () => {
-  //     try {
-  //       const response = await api.get('/class');
-  //       const items = response.data.items as IClass[];
-  //       const distribution = items.map((c) => ({
-  //         name: c.class_name,
-  //         count: Array.isArray(c.objects) ? c.objects.length : 0,
-  //       }));
-  //       setClassDistribution(distribution);
-  //     } catch (error) {
-  //       console.log('Erro ao carregar distribuição por classe', error);
-  //     }
-  //   };
-
-  //   fetchClassDistribution();
-  // }, []);
 
   const stats = [
     {
@@ -278,12 +184,10 @@ export default function Dashboard() {
             title="Interações ao longo do tempo"
             description="Série temporal de interações"
             days={days}
-            data={fetchTimeSeries}
-            onButtonClick={handleChangeDays}
+            data={timeSeries}
+            onButtonClick={() => setDays(days === 7 ? 30 : 7)}
             className="w-full h-96"
           />
-
-          {/* <ChartRadarDots data={classDistribution} /> */}
 
           <ChartPieLabel
             title="Status dos Objetos"

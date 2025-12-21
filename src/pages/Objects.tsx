@@ -12,14 +12,7 @@ import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
 import { Search } from 'lucide-react';
 import { ChartPieLabel } from '@/components/charts/ChartPieLabel';
-
-type StatusItem = {
-  status?: number | string;
-  name?: string;
-  count?: number;
-  total?: number;
-  value?: number;
-};
+import { useCharts } from '@/context/useCharts';
 
 export default function Objects() {
   const [objects, setObjects] = useState<IObject[]>([]);
@@ -28,9 +21,7 @@ export default function Objects() {
   // const [limit, setLimit] = useState<number>();
   const [total, setTotal] = useState<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const [statusCounts, setStatusCounts] = useState<
-    { name: string; value: number }[]
-  >([]);
+  const { statusCounts } = useCharts();
 
   useEffect(() => {
     const fetchObjects = async () => {
@@ -44,70 +35,6 @@ export default function Objects() {
 
     fetchObjects();
   }, []);
-
-  useEffect(() => {
-    const fetchStatusCounts = async () => {
-      try {
-        const response = await api.get('/object/status-counts');
-        const raw = Array.isArray(response.data?.items)
-          ? response.data.items
-          : response.data;
-
-        const mapped = (raw as StatusItem[]).map((item) => {
-          let statusLabel = '';
-          switch (item.status) {
-            case '0':
-              statusLabel = 'Desconhecido';
-              break;
-            case 'online':
-              statusLabel = 'online';
-              break;
-            case 'offline':
-              statusLabel = 'offline';
-              break;
-            case 'manutenção':
-              statusLabel = 'Manutenção';
-              break;
-            default:
-              break;
-          }
-
-          const val = item.value ?? item.count ?? item.total ?? 0;
-          return { name: statusLabel as string, value: val };
-        });
-        setStatusCounts(mapped);
-      } catch (error) {
-        console.error('Erro ao carregar status dos objetos:', error);
-      }
-    };
-    fetchStatusCounts();
-  }, []);
-
-  const handleSearch = async (query: string) => {
-    // Cancel previous request if still pending
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Create new abort controller for this request
-    abortControllerRef.current = new AbortController();
-
-    try {
-      const url = query
-        ? `/object/search?name=${encodeURIComponent(query)}`
-        : '/object';
-      const response = await api.get(url, {
-        signal: abortControllerRef.current.signal,
-      });
-      setObjects(response.data.items || []);
-      setTotal(response.data.total ?? response.data.items?.length ?? 0);
-    } catch (error: unknown) {
-      // Ignore abort errors (previous requests cancelled)
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Erro na busca:', error);
-      }
-    }
-  };
 
   const rows = useMemo(() => {
     return objects.slice(0, 5).map((obj) => (
@@ -152,6 +79,32 @@ export default function Objects() {
   if (loading) {
     return <Loading />;
   }
+
+  const handleSearch = async (query: string) => {
+    // Cancel previous request if still pending
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const url = query
+        ? `/object/search?name=${encodeURIComponent(query)}`
+        : '/object';
+      const response = await api.get(url, {
+        signal: abortControllerRef.current.signal,
+      });
+      setObjects(response.data.items || []);
+      setTotal(response.data.total ?? response.data.items?.length ?? 0);
+    } catch (error: unknown) {
+      // Ignore abort errors (previous requests cancelled)
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Erro na busca:', error);
+      }
+    }
+  };
 
   return (
     <Layout>
@@ -212,7 +165,7 @@ export default function Objects() {
                     <th className="text-left py-3 px-4 font-medium">Marca</th>
                     <th className="text-left py-3 px-4 font-medium">Modelo</th>
                     <th className="text-left py-3 px-4 font-medium">Status</th>
-                    {/* <th className="text-right py-3 px-4 font-medium">Ações</th> */}
+                    <th className="text-left py-3 px-4 font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
