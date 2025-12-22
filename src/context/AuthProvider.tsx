@@ -28,7 +28,8 @@ export default function AuthProvider({ children }: Props) {
           .then((response) => {
             setUser({
               email: response.data.email || '',
-              name: response.data.name,
+              name: response.data.name || '',
+              role: response.data.role || 'user',
             });
             setUserLoaded(true);
           })
@@ -55,11 +56,12 @@ export default function AuthProvider({ children }: Props) {
       setUser({
         email: userData.data.email || email,
         name: userData.data.name,
+        role: userData.data.role || 'user',
       });
       setUserLoaded(true);
     } catch {
       // Se não conseguir buscar, usar apenas o email
-      setUser({ email });
+      setUser({ email, role: 'user' });
       setUserLoaded(true);
     }
   };

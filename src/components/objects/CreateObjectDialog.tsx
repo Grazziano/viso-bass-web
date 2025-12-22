@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { api } from '@/services/api';
 import type { IObject } from '@/types/objects';
+import { useAuth } from '@/context/useAuth';
 
 interface CreateObjectDialogProps {
   onCreate?: (obj: IObject) => void;
@@ -35,6 +36,8 @@ export default function CreateObjectDialog({
 }: CreateObjectDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { user } = useAuth();
 
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
@@ -55,9 +58,44 @@ export default function CreateObjectDialog({
     setFunctions('');
     setRestrictions('');
     setLimitations('');
+    setQualification(0);
+    setErrors({});
   };
 
+  const validateFields = () => {
+    const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+    const next: Record<string, string> = {};
+    if (!name.trim()) next.name = 'Nome é obrigatório';
+    if (!brand.trim()) next.brand = 'Marca é obrigatória';
+    if (!model.trim()) next.model = 'Modelo é obrigatório';
+    if (!networkMAC.trim()) next.networkMAC = 'MAC é obrigatório';
+    else if (!macRegex.test(networkMAC.trim()))
+      next.networkMAC = 'MAC inválido (formato XX:XX:XX:XX:XX:XX)';
+    if (!(status === 0 || status === 1)) next.status = 'Status inválido';
+    if (Number.isNaN(qualification)) next.qualification = 'Informe um número';
+    else if (qualification < 0 || qualification > 100)
+      next.qualification = 'Qualificação deve ser entre 0 e 100';
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const canSubmit = (() => {
+    const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+    return (
+      !!name.trim() &&
+      !!brand.trim() &&
+      !!model.trim() &&
+      macRegex.test(networkMAC.trim()) &&
+      (status === 0 || status === 1) &&
+      !Number.isNaN(qualification) &&
+      qualification >= 0 &&
+      qualification <= 100
+    );
+  })();
+
   const handleSubmit = async () => {
+    const ok = validateFields();
+    if (!ok) return;
     setLoading(true);
 
     try {
@@ -100,10 +138,12 @@ export default function CreateObjectDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Objeto
-        </Button>
+        {user?.role === 'admin' && (
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Objeto
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>
@@ -117,22 +157,62 @@ export default function CreateObjectDialog({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
           <div>
             <Label className="text-xs">Nome</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
+            <Input
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (errors.name) setErrors((p) => ({ ...p, name: '' }));
+              }}
+              aria-invalid={!!errors.name}
+            />
+            {errors.name ? (
+              <p className="text-xs text-destructive mt-1">{errors.name}</p>
+            ) : null}
           </div>
           <div>
             <Label className="text-xs">Marca</Label>
-            <Input value={brand} onChange={(e) => setBrand(e.target.value)} />
+            <Input
+              value={brand}
+              onChange={(e) => {
+                setBrand(e.target.value);
+                if (errors.brand) setErrors((p) => ({ ...p, brand: '' }));
+              }}
+              aria-invalid={!!errors.brand}
+            />
+            {errors.brand ? (
+              <p className="text-xs text-destructive mt-1">{errors.brand}</p>
+            ) : null}
           </div>
           <div>
             <Label className="text-xs">Modelo</Label>
-            <Input value={model} onChange={(e) => setModel(e.target.value)} />
+            <Input
+              value={model}
+              onChange={(e) => {
+                setModel(e.target.value);
+                if (errors.model) setErrors((p) => ({ ...p, model: '' }));
+              }}
+              aria-invalid={!!errors.model}
+            />
+            {errors.model ? (
+              <p className="text-xs text-destructive mt-1">{errors.model}</p>
+            ) : null}
           </div>
           <div>
             <Label className="text-xs">Network (MAC)</Label>
             <Input
               value={networkMAC}
-              onChange={(e) => setNetworkMAC(e.target.value)}
+              onChange={(e) => {
+                setNetworkMAC(e.target.value);
+                if (errors.networkMAC)
+                  setErrors((p) => ({ ...p, networkMAC: '' }));
+              }}
+              aria-invalid={!!errors.networkMAC}
             />
+            {errors.networkMAC ? (
+              <p className="text-xs text-destructive mt-1">
+                {errors.networkMAC}
+              </p>
+            ) : null}
           </div>
 
           <div>
@@ -140,8 +220,20 @@ export default function CreateObjectDialog({
             <Input
               value={qualification}
               type="number"
-              onChange={(e) => setQualification(e.target.valueAsNumber)}
+              min={0}
+              max={100}
+              onChange={(e) => {
+                setQualification(e.target.valueAsNumber);
+                if (errors.qualification)
+                  setErrors((p) => ({ ...p, qualification: '' }));
+              }}
+              aria-invalid={!!errors.qualification}
             />
+            {errors.qualification ? (
+              <p className="text-xs text-destructive mt-1">
+                {errors.qualification}
+              </p>
+            ) : null}
           </div>
 
           <div>
@@ -161,6 +253,9 @@ export default function CreateObjectDialog({
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {errors.status ? (
+              <p className="text-xs text-destructive mt-1">{errors.status}</p>
+            ) : null}
           </div>
 
           <div className="sm:col-span-2">
@@ -196,7 +291,7 @@ export default function CreateObjectDialog({
           <AlertDialogCancel>Fechar</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !canSubmit}
             className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {loading ? 'Salvando...' : 'Salvar'}
