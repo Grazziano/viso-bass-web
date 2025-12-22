@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChartBarDays } from '@/components/charts/ChartBarDays';
 import Title from '@/components/common/Title';
 import InteractionsTable from '@/components/interactions/InteractionsTable';
@@ -15,6 +15,7 @@ export default function Interactions() {
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const { timeSeries, countByDay, days, period, setPeriod } = useCharts();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   console.log(limit);
   console.log(timeSeries);
@@ -39,6 +40,29 @@ export default function Interactions() {
 
     fetchInteractions();
   }, []);
+
+  const handleSearch = async (query: string) => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    try {
+      const url = query
+        ? `/interaction/search?name=${encodeURIComponent(query)}`
+        : '/interaction';
+      const response = await api.get(url, {
+        signal: abortControllerRef.current.signal,
+      });
+      setLimit(response.data.limit ?? 0);
+      setPage(response.data.page ?? 0);
+      setTotal(response.data.total ?? 0);
+      setInteractions(response.data.items ?? []);
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Erro na busca de interações:', error);
+      }
+    }
+  };
 
   if (loading) {
     return <Loading />;
@@ -67,7 +91,8 @@ export default function Interactions() {
         {/* Search and Filters */}
         <SearchAndFilters
           placeholder="Buscar interações..."
-          btnText="Filtros"
+          btnText="Buscar"
+          onSearch={handleSearch}
         />
 
         {/* Interactions Table */}
