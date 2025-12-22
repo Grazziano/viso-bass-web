@@ -31,6 +31,11 @@ export default function SearchAndFilters({
               className="pl-10"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  onSearch?.(query.trim());
+                }
+              }}
             />
           </div>
           <Button variant="outline" onClick={() => onSearch?.(query.trim())}>
