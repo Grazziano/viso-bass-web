@@ -6,17 +6,26 @@ import Layout from '@/components/layouts/Layout';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCharts } from '@/context/useCharts';
 
 export default function Interactions() {
   const [interactions, setInteractions] = useState([]);
-  const [limit, setLimit] = useState<number>(0);
-  const [page, setPage] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(5);
+  const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const { timeSeries, countByDay, days, period, setPeriod } = useCharts();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const totalPages = Math.max(1, Math.ceil(total / (limit || 1)));
 
+  // Ensure current page does not exceed total pages
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [totalPages, page]);
   console.log(limit);
   console.log(timeSeries);
   console.log(days);
@@ -26,11 +35,13 @@ export default function Interactions() {
     const fetchInteractions = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/interaction');
-        setLimit(response.data.limit);
-        setPage(response.data.page);
-        setTotal(response.data.total);
-        setInteractions(response.data.items);
+        const response = await api.get(
+          `/interaction?page=${page}&limit=${limit}`
+        );
+        setLimit(response.data.limit ?? limit);
+        setPage(response.data.page ?? page);
+        setTotal(response.data.total ?? response.data.items?.length ?? 0);
+        setInteractions(response.data.items ?? []);
       } catch (error) {
         console.log(error);
       } finally {
@@ -39,23 +50,30 @@ export default function Interactions() {
     };
 
     fetchInteractions();
-  }, []);
+  }, [page, limit]);
 
   const handleSearch = async (query: string) => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+
+    // Reset to first page when searching
+    const searchPage = query ? 1 : page;
+    if (query) setPage(1);
+
     abortControllerRef.current = new AbortController();
     try {
       const url = query
-        ? `/interaction/search?name=${encodeURIComponent(query)}`
-        : '/interaction';
+        ? `/interaction/search?name=${encodeURIComponent(
+            query
+          )}&page=${searchPage}&limit=${limit}`
+        : `/interaction?page=${page}&limit=${limit}`;
       const response = await api.get(url, {
         signal: abortControllerRef.current.signal,
       });
-      setLimit(response.data.limit ?? 0);
-      setPage(response.data.page ?? 0);
-      setTotal(response.data.total ?? 0);
+      setLimit(response.data.limit ?? limit);
+      setPage(response.data.page ?? searchPage);
+      setTotal(response.data.total ?? response.data.items?.length ?? 0);
       setInteractions(response.data.items ?? []);
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
@@ -97,6 +115,35 @@ export default function Interactions() {
 
         {/* Interactions Table */}
         <InteractionsTable interactions={interactions} total={total} />
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Exibindo {Math.min((page - 1) * limit + 1, total || 0)} -{' '}
+            {Math.min(page * limit, total)} de {total}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <div className="px-3 py-1 rounded-md bg-muted/10 text-sm">
+              Página {page} de {totalPages}
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </Layout>
   );
