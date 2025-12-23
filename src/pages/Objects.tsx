@@ -10,34 +10,49 @@ import { AlertDialogDemo } from '@/components/objects/AlertDialogDemo';
 import CreateObjectDialog from '@/components/objects/CreateObjectDialog';
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
-import { Search } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ChartPieLabel } from '@/components/charts/ChartPieLabel';
 import { useCharts } from '@/context/useCharts';
 
 export default function Objects() {
   const [objects, setObjects] = useState<IObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  // const [page, setPage] = useState<number>();
-  // const [limit, setLimit] = useState<number>();
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(5);
   const [total, setTotal] = useState<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { statusCounts } = useCharts();
+  const totalPages = Math.max(1, Math.ceil(total / (limit || 1)));
+
+  // Ensure current page does not exceed total pages (e.g., after deletions or limit change)
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [totalPages]);
 
   useEffect(() => {
     const fetchObjects = async () => {
-      const response = await api.get('/object');
-      setObjects(response.data.items);
-      // setLimit(response.data.limit);
-      // setPage(response.data.page);
-      setTotal(response.data.total);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const response = await api.get(`/object?page=${page}&limit=${limit}`);
+        setObjects(response.data.items ?? []);
+        setLimit(response.data.limit ?? limit);
+        setPage(response.data.page ?? page);
+        setTotal(response.data.total ?? 0);
+      } catch (error) {
+        console.error('Erro ao buscar objetos:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchObjects();
-  }, []);
+  }, [page, limit]);
 
   const rows = useMemo(() => {
-    return objects.slice(0, 5).map((obj) => (
+    return objects.map((obj) => (
       <tr
         key={obj._id}
         className="border-b hover:bg-muted/50 transition-colors"
@@ -86,17 +101,25 @@ export default function Objects() {
       abortControllerRef.current.abort();
     }
 
+    // Reset to first page when searching
+    const searchPage = query ? 1 : page;
+    if (query) setPage(1);
+
     // Create new abort controller for this request
     abortControllerRef.current = new AbortController();
 
     try {
       const url = query
-        ? `/object/search?name=${encodeURIComponent(query)}`
-        : '/object';
+        ? `/object/search?name=${encodeURIComponent(
+            query
+          )}&page=${searchPage}&limit=${limit}`
+        : `/object?page=${page}&limit=${limit}`;
       const response = await api.get(url, {
         signal: abortControllerRef.current.signal,
       });
       setObjects(response.data.items || []);
+      setLimit(response.data.limit ?? limit);
+      setPage(response.data.page ?? searchPage);
       setTotal(response.data.total ?? response.data.items?.length ?? 0);
     } catch (error: unknown) {
       // Ignore abort errors (previous requests cancelled)
@@ -119,6 +142,7 @@ export default function Objects() {
           <CreateObjectDialog
             onCreate={(obj) => {
               setObjects((prev) => [obj, ...prev]);
+              setTotal((prev) => prev + 1);
             }}
           />
         </div>
@@ -183,6 +207,34 @@ export default function Objects() {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Exibindo {Math.min((page - 1) * limit + 1, total || 0)} -{' '}
+                {Math.min(page * limit, total)} de {total}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <div className="px-3 py-1 rounded-md bg-muted/10 text-sm">
+                  Página {page} de {totalPages}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
