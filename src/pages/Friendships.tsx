@@ -3,31 +3,44 @@ import Title from '@/components/common/Title';
 import FriendshipCard from '@/components/friendships/FriendshipCard';
 import FriendshipsTable from '@/components/friendships/FriendshipsTable';
 import Layout from '@/components/layouts/Layout';
-import { Search } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
 import type { IFriendship } from '@/types/friendship';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
+import { Button } from '@/components/ui/button';
 
 export default function Friendships() {
   const [pagerankFriendship, setPagerankFriendship] = useState<IFriendship[]>(
     []
   );
-  const [limit, setLimit] = useState<number>(0);
-  const [page, setPage] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(5);
+  const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const totalPages = Math.max(1, Math.ceil(total / (limit || 1)));
+
+  // Ensure current page does not exceed total pages
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [totalPages, page]);
 
   useEffect(() => {
     const fetchFriendships = async () => {
       try {
         setLoading(true);
-        const friendshipsData = await api.get('/pagerank-friendship');
-        setPagerankFriendship(friendshipsData.data.items);
-        setLimit(friendshipsData.data.limit);
-        setPage(friendshipsData.data.page);
-        setTotal(friendshipsData.data.total);
+        const friendshipsData = await api.get(
+          `/pagerank-friendship?page=${page}&limit=${limit}`
+        );
+        setPagerankFriendship(friendshipsData.data.items ?? []);
+        setLimit(friendshipsData.data.limit ?? limit);
+        setPage(friendshipsData.data.page ?? page);
+        setTotal(
+          friendshipsData.data.total ?? friendshipsData.data.items?.length ?? 0
+        );
 
         console.log(friendshipsData.data.items);
       } catch (error) {
@@ -38,7 +51,7 @@ export default function Friendships() {
     };
 
     fetchFriendships();
-  }, []);
+  }, [page, limit]);
 
   const handleSearch = async (query: string) => {
     // Cancel previous request if still pending
@@ -46,17 +59,25 @@ export default function Friendships() {
       abortControllerRef.current.abort();
     }
 
+    // Reset to first page when searching
+    const searchPage = query ? 1 : page;
+    if (query) setPage(1);
+
     // Create new abort controller for this request
     abortControllerRef.current = new AbortController();
 
     try {
       const url = query
-        ? `/pagerank-friendship/search?name=${encodeURIComponent(query)}`
-        : '/pagerank-friendship';
+        ? `/pagerank-friendship/search?name=${encodeURIComponent(
+            query
+          )}&page=${searchPage}&limit=${limit}`
+        : `/pagerank-friendship?page=${page}&limit=${limit}`;
       const response = await api.get(url, {
         signal: abortControllerRef.current.signal,
       });
       setPagerankFriendship(response.data.items || []);
+      setLimit(response.data.limit ?? limit);
+      setPage(response.data.page ?? searchPage);
       setTotal(response.data.total ?? response.data.items?.length ?? 0);
     } catch (error: unknown) {
       // Ignore abort errors (previous requests cancelled)
@@ -90,6 +111,37 @@ export default function Friendships() {
 
         {/* Friendships Table */}
         <FriendshipsTable friendships={pagerankFriendship} total={total} />
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Exibindo {Math.min((page - 1) * limit + 1, total || 0)} -{' '}
+            {Math.min(page * limit, total)} de {total}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+
+            <div className="px-3 py-1 rounded-md bg-muted/10 text-sm">
+              Página {page} de {totalPages}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </Layout>
   );
