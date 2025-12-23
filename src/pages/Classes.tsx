@@ -3,8 +3,9 @@ import ClassCard from '@/components/classes/ClassCard';
 import Title from '@/components/common/Title';
 import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api } from '@/services/api';
+
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
 
@@ -19,15 +20,30 @@ export default function Classes() {
   const [classList, setClassList] = useState<ClassItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(6);
+  const [total, setTotal] = useState<number>(0);
+  const totalPages = Math.max(1, Math.ceil(total / (limit || 1)));
+
+  // Ensure current page does not exceed total pages
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [totalPages, page]);
+
   // const [objectCounts, setObjectCounts] = useState<{ name: string; count: number }[]>([]);
 
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await api.get('class');
-        setClassList(response.data.items);
-        // console.log(response.data.items);
+        const response = await api.get(`/class?page=${page}&limit=${limit}`);
+        setClassList(response.data.items ?? []);
+        setLimit(response.data.limit ?? limit);
+        setPage(response.data.page ?? page);
+        setTotal(response.data.total ?? response.data.items?.length ?? 0);
       } catch (error) {
         console.log(error);
       } finally {
@@ -36,7 +52,7 @@ export default function Classes() {
     };
 
     fetchClasses();
-  }, []);
+  }, [page, limit]);
 
   const handleSearch = async (query: string) => {
     // Cancel previous request if still pending
@@ -44,17 +60,26 @@ export default function Classes() {
       abortControllerRef.current.abort();
     }
 
+    // Reset to first page when searching
+    const searchPage = query ? 1 : page;
+    if (query) setPage(1);
+
     // Create new abort controller for this request
     abortControllerRef.current = new AbortController();
 
     try {
       const url = query
-        ? `/class/search?name=${encodeURIComponent(query)}`
-        : '/class';
+        ? `/class/search?name=${encodeURIComponent(
+            query
+          )}&page=${searchPage}&limit=${limit}`
+        : `/class?page=${page}&limit=${limit}`;
       const response = await api.get(url, {
         signal: abortControllerRef.current.signal,
       });
       setClassList(response.data.items || []);
+      setLimit(response.data.limit ?? limit);
+      setPage(response.data.page ?? searchPage);
+      setTotal(response.data.total ?? response.data.items?.length ?? 0);
     } catch (error: unknown) {
       // Ignore abort errors (previous requests cancelled)
       if (error instanceof Error && error.name !== 'AbortError') {
@@ -124,6 +149,37 @@ export default function Classes() {
               objects={classItem.objects}
             />
           ))}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Exibindo {Math.min((page - 1) * limit + 1, total || 0)} -{' '}
+            {Math.min(page * limit, total)} de {total}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+
+            <div className="px-3 py-1 rounded-md bg-muted/10 text-sm">
+              Página {page} de {totalPages}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </Layout>
