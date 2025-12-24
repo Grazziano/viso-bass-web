@@ -85,16 +85,21 @@ export default function CreateClassDialog({
       // Try to surface validation errors returned by the API
       const messages: string[] = [];
       const axiosError = err as AxiosError;
-      if (axiosError?.response?.data?.message) {
-        if (Array.isArray(axiosError.response.data.message)) {
-          messages.push(...axiosError.response.data.message);
-        } else if (typeof axiosError.response.data.message === 'string') {
-          messages.push(axiosError.response.data.message);
+      const dataUnknown = axiosError?.response?.data as unknown;
+      if (dataUnknown && typeof dataUnknown === 'object') {
+        const data = dataUnknown as { message?: string | string[] };
+        if (Array.isArray(data.message)) {
+          messages.push(...data.message);
+        } else if (typeof data.message === 'string') {
+          messages.push(data.message);
         }
-      } else if (axiosError?.message) {
-        messages.push(axiosError.message);
-      } else {
-        messages.push('Erro desconhecido ao criar classe');
+      }
+      if (messages.length === 0) {
+        if (typeof axiosError?.message === 'string') {
+          messages.push(axiosError.message);
+        } else {
+          messages.push('Erro desconhecido ao criar classe');
+        }
       }
 
       // attach field-level errors if possible (e.g., messages about objects)

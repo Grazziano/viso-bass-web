@@ -135,7 +135,7 @@ function ChartTooltipContent({
     const key = `${labelKey || item?.dataKey || item?.name || 'value'}`;
     const itemConfig = getPayloadConfigFromPayload(
       config,
-      item as Record<string, unknown>,
+      item as unknown,
       key
     );
     const value =
@@ -187,7 +187,7 @@ function ChartTooltipContent({
             const key = `${nameKey || item.name || item.dataKey || 'value'}`;
             const itemConfig = getPayloadConfigFromPayload(
               config,
-              item as Record<string, unknown>,
+              item as unknown,
               key
             );
             const indicatorColor = color || item.payload.fill || item.color;
@@ -289,7 +289,7 @@ function ChartLegendContent({
           const key = `${nameKey || item.dataKey || 'value'}`;
           const itemConfig = getPayloadConfigFromPayload(
             config,
-            item as Record<string, unknown>,
+            item as unknown,
             key
           );
 
@@ -321,27 +321,26 @@ function ChartLegendContent({
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: Record<string, unknown>,
+  payload: unknown,
   key: string
 ) {
   if (typeof payload !== 'object' || payload === null) {
     return undefined;
   }
 
-  const payloadPayload =
-    'payload' in payload &&
-    typeof payload.payload === 'object' &&
-    payload.payload !== null
-      ? payload.payload
-      : undefined;
+  const obj = payload as Record<string, unknown>;
+  let payloadPayload: Record<string, unknown> | undefined;
+  if ('payload' in obj) {
+    const pp = (obj as Record<string, unknown>).payload as unknown;
+    if (typeof pp === 'object' && pp !== null) {
+      payloadPayload = pp as Record<string, unknown>;
+    }
+  }
 
   let configLabelKey: string = key;
 
-  if (
-    key in payload &&
-    typeof payload[key as keyof typeof payload] === 'string'
-  ) {
-    configLabelKey = payload[key as keyof typeof payload] as string;
+  if (key in obj && typeof obj[key as keyof typeof obj] === 'string') {
+    configLabelKey = obj[key as keyof typeof obj] as string;
   } else if (
     payloadPayload &&
     key in payloadPayload &&
