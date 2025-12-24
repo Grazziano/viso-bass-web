@@ -16,9 +16,14 @@ export function ChartsProvider({ children }: ChartsProviderProps) {
   const [statusCounts, setStatusCounts] = useState<StatusCount[]>([]);
   const [timeSeries, setTimeSeries] = useState<TimeSeries[]>([]);
   const [countByDay, setCountByDay] = useState<CountByDay[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  // Loading is derived from data presence to avoid calling setState inside an effect
   const [days, setDays] = useState<number>(7);
   const [period, setPeriod] = useState<'month' | 'week'>('month');
+
+  const loading =
+    statusCounts.length === 0 &&
+    timeSeries.length === 0 &&
+    countByDay.length === 0;
 
   // Fetch statusCounts
   useEffect(() => {
@@ -82,20 +87,29 @@ export function ChartsProvider({ children }: ChartsProviderProps) {
         const response = await api.get(
           '/interaction/count-by-day?period=' + period
         );
-        let data = (response.data ?? []) as any[];
 
-        if (!Array.isArray(data) && typeof data === 'object') {
-          const obj = data as any;
-          data = obj.data || obj.items || Object.values(obj).flat();
+        // Normalize unknown response shapes into an array
+        let raw: unknown = response.data ?? [];
+        if (Array.isArray(raw)) {
+          // ok
+        } else if (raw && typeof raw === 'object') {
+          const obj = raw as Record<string, unknown>;
+          raw =
+            (obj.data as unknown) ??
+            (obj.items as unknown) ??
+            Object.values(obj).flat();
         }
 
-        const formatted = (Array.isArray(data) ? data : []).map((item) => {
-          const dayValue = item.day ?? item.date ?? item._id ?? '—';
-          const countValue = item.count ?? item.total ?? item.interactions ?? 0;
+        const arr = Array.isArray(raw) ? (raw as unknown[]) : [];
+
+        const formatted = arr.map((item) => {
+          const it = item as Record<string, unknown>;
+          const dayValue = it.day ?? it.date ?? it._id ?? '—';
+          const countValue = it.count ?? it.total ?? it.interactions ?? 0;
 
           return {
             day: String(dayValue),
-            count: Number(countValue) || 0,
+            count: Number(countValue as number) || 0,
           };
         });
 
@@ -107,13 +121,6 @@ export function ChartsProvider({ children }: ChartsProviderProps) {
 
     fetchCountByDay();
   }, [period]);
-
-  // Set loading false when all data is loaded
-  useEffect(() => {
-    if (statusCounts.length > 0 || timeSeries.length >= 0) {
-      setLoading(false);
-    }
-  }, [statusCounts, timeSeries]);
 
   return (
     <ChartsContext.Provider

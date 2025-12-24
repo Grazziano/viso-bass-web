@@ -35,13 +35,11 @@ export default function Register() {
       } else {
         toast.error('Por favor, preencha todos os campos');
       }
-    } catch (error: unknown) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error.response?.data?.message || 'Erro ao registrar usuário'
-        );
-      } else if (error instanceof Error) {
-        toast.error(error.message);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data?.message || 'Erro ao registrar usuário');
+      } else if (err instanceof Error) {
+        toast.error(err.message);
       } else {
         toast.error('Erro ao registrar usuário');
       }

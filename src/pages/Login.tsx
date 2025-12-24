@@ -34,15 +34,15 @@ export default function Login() {
       await login(email, password);
       toast.success('Login realizado com sucesso!');
       navigate(from);
-    } catch (error: unknown) {
+    } catch (err) {
       let errorMessage = 'Erro ao realizar login. Tente novamente mais tarde.';
-      if (error && typeof error === 'object' && 'response' in error) {
-        const apiError = error as {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const apiError = err as {
           response?: { data?: { message?: string } };
         };
         errorMessage = apiError.response?.data?.message || errorMessage;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
       }
       toast.error(errorMessage);
     } finally {

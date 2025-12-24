@@ -79,10 +79,10 @@ export default function Friendships() {
       setLimit(response.data.limit ?? limit);
       setPage(response.data.page ?? searchPage);
       setTotal(response.data.total ?? response.data.items?.length ?? 0);
-    } catch (error: unknown) {
+    } catch (err) {
       // Ignore abort errors (previous requests cancelled)
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Erro na busca:', error);
+      if (err instanceof Error && err.name !== 'AbortError') {
+        console.error('Erro na busca:', err);
       }
     }
   };

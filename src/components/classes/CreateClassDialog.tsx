@@ -81,7 +81,7 @@ export default function CreateClassDialog({
       if (onCreate) onCreate(created);
       setOpen(false);
       reset();
-    } catch (err) {
+    } catch (err: unknown) {
       // Try to surface validation errors returned by the API
       const messages: string[] = [];
       const axiosError = err as AxiosError;
@@ -109,7 +109,7 @@ export default function CreateClassDialog({
         setErrors((p) => ({ ...p, ...nextErrors }));
 
       setServerErrors(messages);
-      console.error('Erro ao criar classe:', error);
+      console.error('Erro ao criar classe:', err);
     } finally {
       setLoading(false);
     }

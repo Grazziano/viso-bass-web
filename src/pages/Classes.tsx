@@ -3,7 +3,7 @@ import ClassCard from '@/components/classes/ClassCard';
 import Title from '@/components/common/Title';
 import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api } from '@/services/api';
 import CreateClassDialog from '@/components/classes/CreateClassDialog';
 
