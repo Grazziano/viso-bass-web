@@ -5,6 +5,7 @@ import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api } from '@/services/api';
+import CreateClassDialog from '@/components/classes/CreateClassDialog';
 
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
@@ -44,8 +45,8 @@ export default function Classes() {
         setLimit(response.data.limit ?? limit);
         setPage(response.data.page ?? page);
         setTotal(response.data.total ?? response.data.items?.length ?? 0);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
       } finally {
         setLoading(false);
       }
@@ -80,10 +81,10 @@ export default function Classes() {
       setLimit(response.data.limit ?? limit);
       setPage(response.data.page ?? searchPage);
       setTotal(response.data.total ?? response.data.items?.length ?? 0);
-    } catch (error: unknown) {
+    } catch (err) {
       // Ignore abort errors (previous requests cancelled)
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Erro na busca:', error);
+      if (err instanceof Error && err.name !== 'AbortError') {
+        console.error('Erro na busca:', err);
       }
     }
   };
@@ -126,10 +127,30 @@ export default function Classes() {
             subtitle="Gerencie as classes cadastradas no sistema"
           />
 
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Classe
-          </Button>
+          <CreateClassDialog
+            onCreate={(created) => {
+              // Safer extraction without `any`/`unknown`
+              const id =
+                '_id' in created && typeof created._id === 'string'
+                  ? created._id
+                  : 'id' in created && typeof created.id === 'string'
+                  ? created.id
+                  : '';
+
+              const newItem: ClassItem = {
+                id,
+                class_name: 'class_name' in created ? created.class_name : '',
+                class_function:
+                  'class_function' in created
+                    ? created.class_function ?? []
+                    : [],
+                objects: 'objects' in created ? created.objects ?? [] : [],
+              };
+
+              setClassList((p) => [newItem, ...p]);
+              setTotal((t) => t + 1);
+            }}
+          />
         </div>
 
         <SearchAndFilters
