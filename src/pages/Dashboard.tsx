@@ -28,15 +28,7 @@ export default function Dashboard() {
   const [lastInteraction, setLastInteraction] = useState<IInteraction>();
   const [lastEnvironment, setLastEnvironment] = useState<IEnvironment>();
   const [lastFriendship, setLastFriendship] = useState<IFriendship>();
-
-  console.log(
-    'lastInteraction => ',
-    lastInteraction,
-    'lastEnvironment =>',
-    lastEnvironment,
-    'lastFriendship =>',
-    lastFriendship
-  );
+  const [interactionLabel, setInteractionLabel] = useState<string>();
 
   const { statusCounts, timeSeries, days, setDays } = useCharts();
 
@@ -90,6 +82,31 @@ export default function Dashboard() {
 
     fechActivities();
   }, []);
+
+  useEffect(() => {
+    const resolveInteractionNames = async () => {
+      try {
+        if (!lastInteraction?.inter_obj_i || !lastInteraction?.inter_obj_j) {
+          setInteractionLabel(undefined);
+          return;
+        }
+        const [objIRes, objJRes] = await Promise.all([
+          api.get(`/object/${lastInteraction.inter_obj_i}`),
+          api.get(`/object/${lastInteraction.inter_obj_j}`),
+        ]);
+        const nameI = objIRes?.data?.obj_name ?? lastInteraction.inter_obj_i;
+        const nameJ = objJRes?.data?.obj_name ?? lastInteraction.inter_obj_j;
+        setInteractionLabel(`${nameI} → ${nameJ}`);
+      } catch {
+        setInteractionLabel(
+          `${lastInteraction?.inter_obj_i ?? 'Desconhecido'} → ${
+            lastInteraction?.inter_obj_j ?? 'Desconhecido'
+          }`
+        );
+      }
+    };
+    resolveInteractionNames();
+  }, [lastInteraction]);
 
   const stats = [
     {
@@ -155,9 +172,10 @@ export default function Dashboard() {
       type: 'Interação',
       action: 'registrada',
       name:
-        lastInteraction?.inter_obj_i && lastInteraction?.inter_obj_j
+        interactionLabel ??
+        (lastInteraction?.inter_obj_i && lastInteraction?.inter_obj_j
           ? `${lastInteraction.inter_obj_i} → ${lastInteraction.inter_obj_j}`
-          : 'Interação Desconhecida',
+          : 'Interação Desconhecida'),
       time: lastInteraction?.createdAt
         ? formatDate(lastInteraction.createdAt)
         : 'Data indisponível',
