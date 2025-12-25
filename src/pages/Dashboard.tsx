@@ -14,6 +14,7 @@ import { formatNumberBR } from '@/utils/format-number.util';
 import { ChartLineLabel } from '@/components/charts/ChartLineLabel';
 import { ChartPieLabel } from '@/components/charts/ChartPieLabel';
 import { useCharts } from '@/context/useCharts';
+import { formatDate } from '@/utils/format-date.util';
 
 export default function Dashboard() {
   const [objects, setObjects] = useState<number>(0);
@@ -138,25 +139,46 @@ export default function Dashboard() {
       type: 'Objeto',
       action: 'criado',
       name: lastObject?.obj_name ?? 'Objeto Desconhecido',
-      time: '2 minutos atrás',
+      time: lastObject?.createdAt
+        ? formatDate(lastObject.createdAt)
+        : 'Data indisponível',
+    },
+    {
+      type: 'Classe',
+      action: 'criada',
+      name: lastClass?.class_name ?? 'Classe Desconhecida',
+      time: lastClass?.createdAt
+        ? formatDate(lastClass.createdAt)
+        : 'Data indisponível',
     },
     {
       type: 'Interação',
       action: 'registrada',
-      name: 'Device A → Device B',
-      time: '5 minutos atrás',
-    },
-    {
-      type: 'Classe',
-      action: 'atualizada',
-      name: lastClass?.class_name ?? 'Classe Desconhecida',
-      time: '10 minutos atrás',
+      name:
+        lastInteraction?.inter_obj_i && lastInteraction?.inter_obj_j
+          ? `${lastInteraction.inter_obj_i} → ${lastInteraction.inter_obj_j}`
+          : 'Interação Desconhecida',
+      time: lastInteraction?.createdAt
+        ? formatDate(lastInteraction.createdAt)
+        : 'Data indisponível',
     },
     {
       type: 'Ambiente',
       action: 'criado',
-      name: 'Sala de Servidor #2',
-      time: '15 minutos atrás',
+      name: lastEnvironment?.env_object_i?.obj_name
+        ? `Origem: ${lastEnvironment.env_object_i.obj_name}`
+        : 'Ambiente Desconhecido',
+      time: lastEnvironment?.createdAt
+        ? formatDate(lastEnvironment.createdAt)
+        : 'Data indisponível',
+    },
+    {
+      type: 'Relação',
+      action: 'atualizada',
+      name: lastFriendship?.rank_object?.obj_name ?? 'Relação Desconhecida',
+      time: lastFriendship?.createdAt
+        ? formatDate(lastFriendship.createdAt)
+        : 'Data indisponível',
     },
   ];
 
