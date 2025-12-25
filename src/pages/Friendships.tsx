@@ -14,6 +14,7 @@ export default function Friendships() {
   const [pagerankFriendship, setPagerankFriendship] = useState<IFriendship[]>(
     []
   );
+  const [topRelevant, setTopRelevant] = useState<IFriendship[]>([]);
   const [limit, setLimit] = useState<number>(5);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
@@ -33,16 +34,18 @@ export default function Friendships() {
       try {
         setLoading(true);
         const friendshipsData = await api.get(
-          `/pagerank-friendship?page=${page}&limit=${limit}`
+          `/pagerank-friendship?page=${page}&limit=${limit}&sort=relevance`
         );
-        setPagerankFriendship(friendshipsData.data.items ?? []);
+        const items = friendshipsData.data.items ?? [];
+        setPagerankFriendship(items);
         setLimit(friendshipsData.data.limit ?? limit);
         setPage(friendshipsData.data.page ?? page);
         setTotal(
           friendshipsData.data.total ?? friendshipsData.data.items?.length ?? 0
         );
 
-        console.log(friendshipsData.data.items);
+        console.log(items);
+        setTopRelevant(items.slice(0, 3));
       } catch (error) {
         console.log(error);
       } finally {
@@ -71,11 +74,13 @@ export default function Friendships() {
         ? `/pagerank-friendship/search?name=${encodeURIComponent(
             query
           )}&page=${searchPage}&limit=${limit}`
-        : `/pagerank-friendship?page=${page}&limit=${limit}`;
+        : `/pagerank-friendship?page=${page}&limit=${limit}&sort=relevance`;
       const response = await api.get(url, {
         signal: abortControllerRef.current.signal,
       });
-      setPagerankFriendship(response.data.items || []);
+      const items = response.data.items || [];
+      setPagerankFriendship(items);
+      setTopRelevant(items.slice(0, 3));
       setLimit(response.data.limit ?? limit);
       setPage(response.data.page ?? searchPage);
       setTotal(response.data.total ?? response.data.items?.length ?? 0);
@@ -101,7 +106,7 @@ export default function Friendships() {
         />
 
         {/* Top Relationships */}
-        <FriendshipCard friendships={pagerankFriendship} />
+        <FriendshipCard friendships={topRelevant} />
 
         <SearchAndFilters
           placeholder="Buscar relações..."

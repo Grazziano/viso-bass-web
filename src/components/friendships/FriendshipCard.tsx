@@ -8,14 +8,17 @@ interface FriendshipCardProps {
 }
 
 export default function FriendshipCard({ friendships }: FriendshipCardProps) {
-  const maxAdjacency = Math.max(
-    ...friendships.map((f) => f.rank_adjacency.length)
-  );
+  const maxAdjacency =
+    friendships.length > 0
+      ? Math.max(...friendships.map((f) => f.rank_adjacency.length))
+      : 1;
 
   return (
     <Card className="bg-primary text-primary-foreground">
       <CardHeader>
-        <CardTitle className="text-primary-foreground">Relações Mais Relevantes</CardTitle>
+        <CardTitle className="text-primary-foreground">
+          Relações Mais Relevantes
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
