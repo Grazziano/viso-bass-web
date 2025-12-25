@@ -8,16 +8,14 @@ interface FriendshipCardProps {
 }
 
 export default function FriendshipCard({ friendships }: FriendshipCardProps) {
-  const maxAdjacency =
-    friendships.length > 0
-      ? Math.max(...friendships.map((f) => f.rank_adjacency.length))
-      : 1;
+  const uniqueCounts = friendships.map((f) => new Set(f.rank_adjacency).size);
+  const maxAdjacency = uniqueCounts.length > 0 ? Math.max(...uniqueCounts) : 1;
 
   return (
     <Card className="bg-primary text-primary-foreground">
       <CardHeader>
         <CardTitle className="text-primary-foreground">
-          Relações Mais Relevantes
+          Relações Mais Relevantes (Conexões Únicas)
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -36,7 +34,7 @@ export default function FriendshipCard({ friendships }: FriendshipCardProps) {
                 </Badge>
                 <div className="text-2xl font-bold">
                   {(
-                    (friendship.rank_adjacency.length / maxAdjacency) *
+                    (new Set(friendship.rank_adjacency).size / maxAdjacency) *
                     100
                   ).toFixed(0)}
                   %
@@ -49,7 +47,7 @@ export default function FriendshipCard({ friendships }: FriendshipCardProps) {
                 ↔ {formatDate(friendship.createdAt)}
               </p>
               <p className="text-xs text-white/60 mt-2">
-                {friendship.rank_adjacency.length} interações
+                {new Set(friendship.rank_adjacency).size} conexões únicas
               </p>
             </div>
           ))}

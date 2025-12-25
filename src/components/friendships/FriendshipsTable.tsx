@@ -12,10 +12,8 @@ export default function FriendshipsTable({
   friendships,
   total,
 }: FriendshipsTableProps) {
-  const maxAdjacency =
-    friendships.length > 0
-      ? Math.max(...friendships.map((f) => f.rank_adjacency.length))
-      : 1;
+  const uniqueCounts = friendships.map((f) => new Set(f.rank_adjacency).size);
+  const maxAdjacency = uniqueCounts.length > 0 ? Math.max(...uniqueCounts) : 1;
 
   return (
     <Card>
@@ -29,8 +27,12 @@ export default function FriendshipsTable({
               <tr className="border-b">
                 <th className="text-left py-3 px-4 font-medium">Rank</th>
                 <th className="text-left py-3 px-4 font-medium">Dispositivo</th>
-                <th className="text-left py-3 px-4 font-medium">Score</th>
-                <th className="text-left py-3 px-4 font-medium">Interações</th>
+                <th className="text-left py-3 px-4 font-medium">
+                  Relevância (Únicas)
+                </th>
+                <th className="text-left py-3 px-4 font-medium">
+                  Conexões únicas
+                </th>
                 <th className="text-left py-3 px-4 font-medium">Criado</th>
               </tr>
             </thead>
@@ -46,8 +48,8 @@ export default function FriendshipsTable({
                 </tr>
               ) : (
                 friendships.map((friendship, index) => {
-                  const percentage =
-                    (friendship.rank_adjacency.length / maxAdjacency) * 100;
+                  const uniqueCount = new Set(friendship.rank_adjacency).size;
+                  const percentage = (uniqueCount / maxAdjacency) * 100;
                   return (
                     <tr
                       key={friendship._id}
@@ -78,7 +80,7 @@ export default function FriendshipsTable({
                         </div>
                       </td>
                       <td className="py-3 px-4 text-muted-foreground">
-                        {friendship.rank_adjacency.length}
+                        {uniqueCount}
                       </td>
                       <td className="py-3 px-4 text-muted-foreground">
                         {formatDate(friendship.createdAt)}
