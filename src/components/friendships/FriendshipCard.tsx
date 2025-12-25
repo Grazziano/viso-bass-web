@@ -1,6 +1,8 @@
 import type { IFriendship } from '@/types/friendship';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { formatDate } from '@/utils/format-date.util';
 
 interface FriendshipCardProps {
@@ -14,9 +16,26 @@ export default function FriendshipCard({ friendships }: FriendshipCardProps) {
   return (
     <Card className="bg-primary text-primary-foreground">
       <CardHeader>
-        <CardTitle className="text-primary-foreground">
-          Relações Mais Relevantes (Conexões Únicas)
-        </CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-primary-foreground">
+            Relações Mais Relevantes (Conexões Únicas)
+          </CardTitle>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-label="Definição de relevância"
+                className="inline-flex"
+              >
+                <Info className="w-4 h-4 opacity-80" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" align="center">
+              Relevância baseada em conexões únicas: (conexões únicas do item /
+              máximo de conexões únicas exibidas) × 100.
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

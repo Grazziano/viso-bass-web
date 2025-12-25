@@ -92,9 +92,6 @@ export default function Friendships() {
     }
   };
 
-  console.log(limit);
-  console.log(page);
-
   if (loading) return <Loading />;
 
   return (
