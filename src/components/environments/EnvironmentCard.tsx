@@ -1,10 +1,17 @@
 // import { MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import type { IEnvironment } from '@/types/enrironment';
 
 export default function EnvironmentCard(props: IEnvironment) {
+  const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+    navigate(`/environments/${props._id}`);
+  };
+
   return (
     <Card key={props._id} className="hover:shadow-glow transition-shadow">
       <CardHeader>
@@ -32,7 +39,7 @@ export default function EnvironmentCard(props: IEnvironment) {
             <p className="text-2xl font-bold">{props.objects.length}</p>
             <p className="text-sm text-muted-foreground">Dispositivos</p>
           </div>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleViewDetails}>
             Ver Detalhes
           </Button>
         </div>

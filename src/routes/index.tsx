@@ -2,6 +2,7 @@ import About from '@/pages/About';
 import Classes from '@/pages/Classes';
 import Dashboard from '@/pages/Dashboard';
 import Environments from '@/pages/Environments';
+import EnvironmentDetail from '@/pages/EnvironmentDetail';
 import Friendships from '@/pages/Friendships';
 import Interactions from '@/pages/Interactions';
 import Login from '@/pages/Login';
@@ -69,6 +70,14 @@ export default function AppRoutes() {
         element={
           <RequireAuth>
             <Environments />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/environments/:id"
+        element={
+          <RequireAuth>
+            <EnvironmentDetail />
           </RequireAuth>
         }
       />
