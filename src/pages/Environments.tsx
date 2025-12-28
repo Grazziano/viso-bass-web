@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import Title from '@/components/common/Title';
 import EnvironmentCard from '@/components/environments/EnvironmentCard';
+import CreateEnvironmentDialog from '@/components/environments/CreateEnvironmentDialog';
 import Layout from '@/components/layouts/Layout';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api } from '@/services/api';
 import Loading from '@/components/common/Loading';
 import SearchAndFilters from '@/components/common/SearchAndFilters';
@@ -81,6 +82,11 @@ export default function Environments() {
     }
   };
 
+  const handleEnvironmentCreated = (newEnvironment: IEnvironment) => {
+    // Refresh the list when a new environment is created
+    setPage(1);
+  };
+
   if (loading) return <Loading />;
 
   return (
@@ -92,10 +98,7 @@ export default function Environments() {
             subtitle="Gerencie os ambientes e suas localizações"
           />
 
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Ambiente
-          </Button>
+          <CreateEnvironmentDialog onCreate={handleEnvironmentCreated} />
         </div>
 
         <SearchAndFilters
