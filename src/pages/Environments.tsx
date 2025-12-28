@@ -84,6 +84,7 @@ export default function Environments() {
 
   const handleEnvironmentCreated = (newEnvironment: IEnvironment) => {
     // Refresh the list when a new environment is created
+    console.log(newEnvironment);
     setPage(1);
   };
 
