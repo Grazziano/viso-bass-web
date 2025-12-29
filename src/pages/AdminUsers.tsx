@@ -3,6 +3,8 @@ import Layout from '@/components/layouts/Layout';
 import Title from '@/components/common/Title';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import SearchAndFilters from '@/components/common/SearchAndFilters';
+import { Search } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -33,8 +35,6 @@ export default function AdminUsers() {
       try {
         setLoading(true);
         const res = await api.get('/auth/users');
-        console.log(res);
-
         setUsers(res.data.items ?? res.data ?? []);
       } catch {
         toast.error('Falha ao carregar usuários');
@@ -44,6 +44,18 @@ export default function AdminUsers() {
     };
     fetchUsers();
   }, []);
+
+  const handleSearch = async (query: string) => {
+    try {
+      const url = query
+        ? `/auth/users/search?q=${encodeURIComponent(query)}`
+        : `/auth/users`;
+      const res = await api.get(url);
+      setUsers(res.data.items ?? res.data ?? []);
+    } catch {
+      toast.error('Erro na busca de usuários');
+    }
+  };
 
   const rows = useMemo(() => {
     return users.map((u) => (
@@ -101,6 +113,12 @@ export default function AdminUsers() {
         <Title
           title="Administração"
           subtitle="Gerencie permissão dos usuários do sistema"
+        />
+
+        <SearchAndFilters
+          placeholder="Buscar usuários por nome ou email..."
+          btnText={Search}
+          onSearch={handleSearch}
         />
 
         <Card>
