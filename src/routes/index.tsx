@@ -11,7 +11,9 @@ import Objects from '@/pages/Objects';
 import Register from '@/pages/Register';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import RequireAuth from './RequireAuth';
+import RequireAdmin from './RequireAdmin';
 import GuestOnly from './GuestOnly';
+import AdminUsers from '@/pages/AdminUsers';
 
 export default function AppRoutes() {
   return (
@@ -31,6 +33,14 @@ export default function AppRoutes() {
           <GuestOnly>
             <Register />
           </GuestOnly>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <RequireAdmin>
+            <AdminUsers />
+          </RequireAdmin>
         }
       />
       <Route

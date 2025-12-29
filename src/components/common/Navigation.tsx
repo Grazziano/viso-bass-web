@@ -6,13 +6,16 @@ import {
   Layers,
   LayoutDashboard,
   Users,
+  Shield,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/useAuth';
 
 export default function Navigation() {
   const location = useLocation();
+  const { user } = useAuth();
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -22,6 +25,9 @@ export default function Navigation() {
     { icon: Globe2, label: 'Ambientes', path: '/environments' },
     { icon: Users, label: 'Relações', path: '/friendships' },
     { icon: Info, label: 'Sobre', path: '/about' },
+    ...(user?.role === 'admin'
+      ? [{ icon: Shield, label: 'Admin', path: '/admin/users' }]
+      : []),
   ];
 
   return (
