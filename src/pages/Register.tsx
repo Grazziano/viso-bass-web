@@ -22,18 +22,63 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string>('');
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       setLoading(true);
-      if (email && password && name) {
+      const isStrong = (() => {
+        const minLen = 8;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasDigit = /\d/.test(password);
+        const hasSpecial = /[^A-Za-z0-9]/.test(password);
+        const common = [
+          '123456',
+          '12345678',
+          '123456789',
+          'password',
+          'qwerty',
+          'abc123',
+          'senha',
+          'admin',
+          '000000',
+          '111111',
+          'letmein',
+        ];
+        const normalized = password.toLowerCase();
+        const hasCommon = common.includes(normalized);
+        const hasRepeat = /^([a-zA-Z0-9])\1{3,}$/.test(password);
+        const nameNorm = name.toLowerCase().replace(/\s+/g, '');
+        const emailLocal = email.toLowerCase().split('@')[0] ?? '';
+        const containsPII =
+          (nameNorm && nameNorm.length >= 3 && normalized.includes(nameNorm)) ||
+          (emailLocal &&
+            emailLocal.length >= 3 &&
+            normalized.includes(emailLocal));
+        return (
+          password.length >= minLen &&
+          hasUpper &&
+          hasLower &&
+          hasDigit &&
+          hasSpecial &&
+          !hasCommon &&
+          !hasRepeat &&
+          !containsPII
+        );
+      })();
+
+      if (email && password && name && isStrong) {
         await authService.register({ name, email, password });
         toast.success('Conta criada com sucesso!');
         navigate('/login');
       } else {
-        toast.error('Por favor, preencha todos os campos');
+        setPasswordError(
+          'Senha fraca. Use no mínimo 8 caracteres com maiúsculas, minúsculas, números e símbolo; evite dados pessoais e sequências.'
+        );
+        toast.error('Por favor, verifique os requisitos da senha');
       }
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -104,9 +149,18 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
                 />
               </div>
+              {passwordError && (
+                <p className="text-xs text-destructive">{passwordError}</p>
+              )}
+              <ul className="text-xs text-muted-foreground list-disc pl-5 space-y-1">
+                <li>Mínimo de 8 caracteres</li>
+                <li>Inclua maiúsculas, minúsculas, números e símbolo</li>
+                <li>Não use seu nome ou email</li>
+                <li>Evite sequências e repetições (ex.: 1111, 1234)</li>
+              </ul>
             </div>
             <Button
               type="submit"
