@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/layouts/Layout';
 import Title from '@/components/common/Title';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +16,14 @@ export default function Account() {
   const [email, setEmail] = useState<string>(user?.email ?? '');
   const [savingProfile, setSavingProfile] = useState(false);
 
+  // Sincronizar estados quando o usuário for carregado
+  useEffect(() => {
+    if (user) {
+      setName(user.name ?? '');
+      setEmail(user.email ?? '');
+    }
+  }, [user]);
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,16 +32,52 @@ export default function Account() {
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) return;
+
+    // Verificar se há mudanças
+    const payload: { name?: string; email?: string } = {};
+    if (name && name.trim() !== user?.name?.trim()) {
+      payload.name = name.trim();
+    }
+    if (email && email.trim() !== user?.email?.trim()) {
+      payload.email = email.trim();
+    }
+
+    // Verificar se há pelo menos um campo para atualizar
+    if (Object.keys(payload).length === 0) {
+      toast.info('Nenhuma alteração detectada');
+      return;
+    }
+
     try {
       setSavingProfile(true);
-      const payload: { name?: string; email?: string } = {};
-      if (name && name !== user?.name) payload.name = name;
-      if (email && email !== user?.email) payload.email = email;
-      await authService.updateMe(payload);
-      toast.success('Informações atualizadas');
-      updateUser?.({ name, email });
-    } catch {
-      toast.error('Falha ao atualizar perfil');
+      const updated = await authService.updateMe(payload);
+      toast.success('Informações atualizadas com sucesso');
+      // Atualizar o contexto com os dados retornados do servidor
+      updateUser?.({
+        name: updated?.name ?? name,
+        email: updated?.email ?? email,
+      });
+      // Atualizar os estados locais também
+      if (updated?.name) setName(updated.name);
+      if (updated?.email) setEmail(updated.email);
+    } catch (error: any) {
+      // Extrair mensagem de erro de forma mais robusta
+      let errorMessage = 'Falha ao atualizar perfil';
+
+      if (error?.response?.data) {
+        const data = error.response.data;
+        if (Array.isArray(data.message)) {
+          errorMessage = data.message.join(', ');
+        } else if (typeof data.message === 'string') {
+          errorMessage = data.message;
+        } else if (data.error) {
+          errorMessage = String(data.error);
+        }
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setSavingProfile(false);
     }
