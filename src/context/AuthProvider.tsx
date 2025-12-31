@@ -44,25 +44,30 @@ export default function AuthProvider({ children }: Props) {
   }, [token, userLoaded]);
 
   const login = async (email: string, password: string) => {
-    const data = await authService.login({ email, password });
-    const newToken = data.access_token as string;
-    localStorage.setItem('token', newToken);
-    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-    setToken(newToken);
-
-    // Tentar buscar informações do usuário
     try {
-      const userData = await api.get('/auth/me');
-      setUser({
-        email: userData.data.email || email,
-        name: userData.data.name,
-        role: userData.data.role || 'user',
-      });
-      setUserLoaded(true);
-    } catch {
-      // Se não conseguir buscar, usar apenas o email
-      setUser({ email, role: 'user' });
-      setUserLoaded(true);
+      const data = await authService.login({ email, password });
+      const newToken = data.access_token as string;
+      localStorage.setItem('token', newToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      setToken(newToken);
+
+      // Tentar buscar informações do usuário
+      try {
+        const userData = await api.get('/auth/me');
+        setUser({
+          email: userData.data.email || email,
+          name: userData.data.name,
+          role: userData.data.role || 'user',
+        });
+        setUserLoaded(true);
+      } catch {
+        // Se não conseguir buscar, usar apenas o email
+        setUser({ email, role: 'user' });
+        setUserLoaded(true);
+      }
+    } catch (error) {
+      // Re-lançar o erro para que o componente possa tratá-lo
+      throw error;
     }
   };
 

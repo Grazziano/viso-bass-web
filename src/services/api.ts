@@ -28,10 +28,11 @@ api.interceptors.response.use(
   },
   (error) => {
     // Se receber 401 (não autorizado), limpa o token
+    // Mas não redireciona aqui para evitar recarregamento da página
+    // O redirecionamento deve ser feito pelos componentes que tratam os erros
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      // Opcionalmente, redirecionar para login
-      window.location.href = '/login';
+      // Não redirecionar aqui - deixar os componentes tratarem o erro
     }
     return Promise.reject(error);
   }

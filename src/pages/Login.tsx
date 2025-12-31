@@ -28,23 +28,55 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevenir propagação do evento
+
+    // Validação básica antes de tentar login
+    if (!email.trim() || !password.trim()) {
+      toast.error('Por favor, preencha todos os campos');
+      return;
+    }
 
     try {
       setLoading(true);
       await login(email, password);
       toast.success('Login realizado com sucesso!');
-      navigate(from);
-    } catch (err) {
+      // Usar navigate em vez de window.location para evitar recarregamento
+      navigate(from, { replace: true });
+    } catch (err: unknown) {
+      // Extrair mensagem de erro de forma mais robusta
       let errorMessage = 'Erro ao realizar login. Tente novamente mais tarde.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const apiError = err as {
-          response?: { data?: { message?: string } };
-        };
-        errorMessage = apiError.response?.data?.message || errorMessage;
+
+      if (err && typeof err === 'object') {
+        // Verificar se é um erro do Axios
+        if ('response' in err) {
+          const apiError = err as {
+            response?: {
+              data?: {
+                message?: string | string[];
+              };
+              status?: number;
+            };
+          };
+
+          if (apiError.response?.data?.message) {
+            const msg = apiError.response.data.message;
+            errorMessage = Array.isArray(msg) ? msg.join(', ') : msg;
+          } else if (apiError.response?.status === 401) {
+            errorMessage =
+              'Credenciais inválidas. Verifique seu email e senha.';
+          } else if (apiError.response?.status === 429) {
+            errorMessage =
+              'Muitas tentativas. Aguarde um momento e tente novamente.';
+          }
+        } else if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        }
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
+
       toast.error(errorMessage);
+      // Não limpar os campos para permitir correção fácil
     } finally {
       setLoading(false);
     }
