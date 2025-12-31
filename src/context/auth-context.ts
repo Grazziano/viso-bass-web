@@ -12,6 +12,7 @@ export interface AuthContextValue {
   user: AuthUser | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateUser?: (partial: Partial<AuthUser>) => void;
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(

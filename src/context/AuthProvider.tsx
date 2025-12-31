@@ -75,8 +75,19 @@ export default function AuthProvider({ children }: Props) {
   };
 
   const value: AuthContextValue = useMemo(
-    () => ({ token, isAuthenticated: !!token, user, login, logout }),
-    [token, user]
+    () => ({
+      token,
+      isAuthenticated: !!token,
+      user,
+      login,
+      logout,
+      updateUser: (partial) =>
+        setUser((prev) => ({
+          ...(prev ?? { email: '', role: 'user' }),
+          ...partial,
+        })),
+    }),
+    [token, user, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

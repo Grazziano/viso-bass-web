@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Users,
   Shield,
+  User as UserIcon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '../ui/button';
@@ -25,6 +26,7 @@ export default function Navigation() {
     { icon: Globe2, label: 'Ambientes', path: '/environments' },
     { icon: Users, label: 'Relações', path: '/friendships' },
     { icon: Info, label: 'Sobre', path: '/about' },
+    { icon: UserIcon, label: 'Conta', path: '/account' },
     ...(user?.role === 'admin'
       ? [{ icon: Shield, label: 'Admin', path: '/admin/users' }]
       : []),

@@ -14,6 +14,7 @@ import RequireAuth from './RequireAuth';
 import RequireAdmin from './RequireAdmin';
 import GuestOnly from './GuestOnly';
 import AdminUsers from '@/pages/AdminUsers';
+import Account from '@/pages/Account';
 
 export default function AppRoutes() {
   return (
@@ -104,6 +105,14 @@ export default function AppRoutes() {
         element={
           <RequireAuth>
             <About />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/account"
+        element={
+          <RequireAuth>
+            <Account />
           </RequireAuth>
         }
       />
