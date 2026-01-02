@@ -84,15 +84,17 @@ npm run dev
 - Monitoramento de dispositivos
 - Controle de acesso (Admin / Usuário)
 - Interface responsiva
-<!-- - Sistema de alertas -->
 - Tema claro/escuro
+<!-- - Sistema de alertas -->
 
 ## 📁 Estrutura
 
 ```
 src/
 ├── components/    # Componentes React
+├── context/       # Estados globais
 ├── pages/         # Páginas da aplicação
+├── routes/        # Rotas da aplicação
 ├── services/      # Conexão com a API
 ├── types/         # Tipos TypeScript
 └── styles/        # Estilos globais
