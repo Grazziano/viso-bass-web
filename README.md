@@ -82,9 +82,10 @@ npm run dev
 - Dashboard com métricas gerais
 - Gráficos interativos de histórico
 - Monitoramento de dispositivos
+- Controle de acesso (Admin / Usuário)
 - Interface responsiva
-<!-- - Sistema de alertas
-- Tema claro/escuro -->
+<!-- - Sistema de alertas -->
+- Tema claro/escuro
 
 ## 📁 Estrutura
 
